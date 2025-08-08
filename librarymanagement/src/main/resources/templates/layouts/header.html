@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/output.css}">
+</head>
+<body>
+<div th:fragment="header (pageTitle, user)">
+    <div class="bg-white shadow-md fixed top-0 w-full z-50">
+        <nav class="flex items-center justify-between px-4 py-3">
+            <!-- Mobile Sidebar Toggle -->
+            <button th:if="${user != null}" class="lg:hidden p-2 bg-gray-100 rounded-md" aria-label="Toggle sidebar">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+
+            <!-- Brand -->
+            <a class="text-xl font-bold text-blue-900" th:href="@{/}">Library</a>
+
+            <div th:if="${user != null}" class="flex-1 flex justify-center hidden md:block">
+                <!-- Search Bar -->
+                <div class="relative w-full max-w-md">
+                    <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <input class="w-full pl-10 pr-4 py-2 rounded-full bg-gray-100 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           type="search" placeholder="Search anything..." aria-label="Search">
+                </div>
+            </div>
+
+            <!-- Right Side Items -->
+            <ul th:if="${user != null}" class="flex items-center space-x-4 ml-auto">
+                <!-- User Profile -->
+                <li class="relative">
+                    <a href="#" class="block" id="navbarUser" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img th:src="@{https://ui-avatars.com/api/?name=__${user.name}__&background=5969ff&color=fff}"
+                             class="w-10 h-10 rounded-full border-2 border-transparent hover:border-blue-500" alt="User">
+                    </a>
+                    <div class="hidden absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg z-50">
+                        <div class="p-4 border-b">
+                            <div class="flex items-center">
+                                <img th:src="@{https://ui-avatars.com/api/?name=__${user.name}__&background=5969ff&color=fff}"
+                                     class="w-12 h-12 rounded-full mr-3" alt="User">
+                                <div>
+                                    <h6 class="font-semibold" th:text="${user.name}">John Abraham</h6>
+                                    <small class="text-gray-500" th:text="${user.email}">john@example.com</small>
+                                </div>
+                            </div>
+                        </div>
+                        <a class="block px-4 py-2 hover:bg-gray-100" th:href="@{/profile}"><i class="fas fa-user mr-2"></i>My Profile</a>
+                        <a class="block px-4 py-2 hover:bg-gray-100" th:href="@{/settings}"><i class="fas fa-cog mr-2"></i>Settings</a>
+                        <a class="block px-4 py-2 hover:bg-gray-100" th:href="@{/billing}"><i class="fas fa-credit-card mr-2"></i>Billing</a>
+                        <div class="border-t"></div>
+                        <a class="block px-4 py-2 text-red-600 hover:bg-red-50" th:href="@{/logout}"><i class="fas fa-power-off mr-2"></i>Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Mobile Search Modal -->
+    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-b border-gray-200">
+                    <h5 class="modal-title" id="searchModalLabel">Search</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           type="search" placeholder="Search anything..." aria-label="Search" autofocus>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
