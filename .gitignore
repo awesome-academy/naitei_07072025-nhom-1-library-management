@@ -1,3 +1,6 @@
+.DS_Store
+.idea/
+.metadata/
 *.rbc
 capybara-*.html
 .rspec
