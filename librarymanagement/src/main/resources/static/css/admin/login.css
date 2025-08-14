@@ -1,0 +1,44 @@
+/* Body */
+body {
+    font-family: var(--font-family);
+    background-color: var(--color-light);
+}
+
+.form-login{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Brand Title */
+.brand-title {
+    color: var(--color-normal);
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+/* Welcome Text */
+.welcome-text {
+    color: var(--color-normal);
+    margin-top: 0.5rem;
+}
+
+/* Custom Input */
+.custom-input {
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+}
+
+.submit-button {
+    background-color: var(--color-normal);
+    padding: 0.5rem 0.75rem;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.25rem;
+}
+
+.card {
+    border-radius: 12px;
+}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Library</title>
+    <link rel="stylesheet" th:href="@{/fontawesome/css/all.min.css}">
+    <link rel="stylesheet" th:href="@{/bootstrap/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/layouts/theme.css}">
+    <link rel="stylesheet" th:href="@{/css/layouts/header.css}">
+    <th:block layout:fragment="head"></th:block>
+</head>
+
+<body>
+    <!-- Header -->
+    <div th:replace="layouts/header :: header"></div>
+
+    <!-- Content -->
+    <main>
+        <th:block layout:fragment="content"></th:block>
+    </main>
+    <script src="/bootstrap/bootstrap.bundle.min.js"></script>
+</body>
+</html>

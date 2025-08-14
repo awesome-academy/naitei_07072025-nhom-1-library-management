@@ -1,0 +1,65 @@
+@font-face {
+  font-family: 'Roboto';
+  src: url('../../fonts/Roboto-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Roboto';
+  src: url('../../fonts/Roboto-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Roboto';
+  src: url('../../fonts/Roboto-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Roboto';
+  src: url('../../fonts/Roboto-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Roboto';
+  src: url('../../fonts/Roboto-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Roboto';
+  src: url('../../fonts/Roboto-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Font */
+  --font-family: 'Roboto', Arial;
+
+  /* Light shades */
+  --color-light: #E7EDF5;
+  --color-light-hover: #DCE5F1;
+  --color-light-active: #B6C8E1;
+
+  /* Normal shades */
+  --color-normal: #134F9F;
+  --color-normal-hover: #11478F;
+  --color-normal-active: #0F3F7F;
+
+  /* Dark shades */
+  --color-dark: #0E3B77;
+  --color-dark-hover: #0B2F5F;
+  --color-dark-active: #092448;
+
+  /* Darker */
+  --color-darker: #071C38;
+}

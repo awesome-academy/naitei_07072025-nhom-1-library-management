@@ -1,55 +1,54 @@
-<!doctype html>
-<html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <link rel="stylesheet" th:href="@{/bootstrap/bootstrap.min.css}">
-    <link rel="stylesheet" th:href="@{/css/layouts/header.css}">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
+
+<head layout:fragment="head">
     <link rel="stylesheet" th:href="@{/css/admin/login.css}">
+    <title>Đăng nhập</title>
 </head>
-<body class="h-100 d-flex flex-column bg-light">
-<th:block th:replace="~{layouts/header :: header(pageTitle='Login', user=null)}"/>
+<body>
+<div layout:fragment="content">
 <div class="container">
-    <div class="row justify-content-center">
+    <div class="row form-login">
         <div class="col-xl-5 col-lg-6 col-md-8 col-sm-10">
             <div class="text-center mb-4">
-                <a th:href="@{/}" class="d-inline-block">
-                    <h1 class="text-primary fw-bold mb-0">Đăng nhập</h1>
-                </a>
+                <h1 class="brand-title">Đăng nhập</h1>
             </div>
 
-            <div class="card shadow-sm border-0">
+            <div class="card border-0">
                 <div class="card-body p-5">
                     <!-- Form login -->
-                    <form id="loginForm" th:action="@{/admin/login}" method="post" th:object="${loginUserDto}" novalidate>
+                    <form id="loginForm" th:action="@{/admin/auth/login}" method="post" th:object="${loginUserDto}" novalidate>
                         <div class="mb-4">
                             <label for="username" class="form-label fw-medium">Tên đăng nhập</label>
                             <input type="text"
                                    name="username"
-                                   class="form-control form-control-lg"
+                                   class="form-control form-control-lg custom-input"
                                    th:field="*{username}"
                                    placeholder="abc@gmail.com"
                                    required>
-                            <div th:if="${#fields.hasErrors('username')}" class="text-danger">
+                            <div th:if="${#fields.hasErrors('username')}" class="invalid-feedback">
                                 <p th:errors="*{username}"></p>
                             </div>
                         </div>
 
                         <div class="mb-4">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <label for="password" class="form-label fw-medium mb-0">Mật khẩu</label>
-                                <a th:href="@{/forgot-password}" class="text-decoration-none small">Quên mật khẩu</a>
+                                <label for="password" class="form-label fw-medium mb-0">Password</label>
+                                <a th:href="@{/forgot-password}" class="link-secondary small">Quên mật khẩu</a>
                             </div>
                             <input type="password"
                                    name="password"
-                                   class="form-control form-control-lg"
+                                   class="form-control form-control-lg custom-input"
                                    th:field="*{password}"
                                    placeholder="********"
                                    required>
-                            <div th:if="${#fields.hasErrors('password')}" class="text-danger">
+                            <div th:if="${#fields.hasErrors('password')}" class="invalid-feedback">
                                 <p th:errors="*{password}"></p>
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                        <button type="submit" class="btn submit-button w-100 mb-3">
                             Đăng nhập
                         </button>
                     </form>
@@ -61,5 +60,6 @@
 
 <script type="module" th:src="@{/js/admin/login.js}"></script>
 <script src="/bootstrap/bootstrap.bundle.min.js"></script>
+</div>
 </body>
 </html>
