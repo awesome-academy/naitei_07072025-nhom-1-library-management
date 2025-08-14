@@ -1,5 +1,6 @@
 package org.librarymanagement.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.librarymanagement.dto.response.ValidationErrorResponse;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -8,6 +9,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -17,7 +20,7 @@ public class ValidationExceptionHandler {
     // Xử lý validate exception
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ValidationErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public ValidationErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request) {
         Map<String,String> fieldErrors = ex.getBindingResult().getFieldErrors().stream()
                 .collect(Collectors.toMap(
                         error -> error.getField(),
@@ -25,14 +28,22 @@ public class ValidationExceptionHandler {
                         (existing, replacement) -> existing
                 ));
 
-        return new ValidationErrorResponse(HttpStatus.BAD_REQUEST.value(),"Validation failed", fieldErrors);
+        return ValidationErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .path(request.getRequestURI())
+                .error("Validation failed")
+                .fieldErrors(fieldErrors)
+                .build();
     }
     // Xử lý trùng dữ liệu
     @ExceptionHandler(DuplicateFieldException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ValidationErrorResponse handleDuplicateFieldException(DuplicateFieldException ex) {
+    public ValidationErrorResponse handleDuplicateFieldException(DuplicateFieldException ex, HttpServletRequest request) {
         return ValidationErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
+                .path(request.getRequestURI())
                 .error("Duplicate field")
                 .fieldErrors(ex.getFieldErrors())
                 .build();

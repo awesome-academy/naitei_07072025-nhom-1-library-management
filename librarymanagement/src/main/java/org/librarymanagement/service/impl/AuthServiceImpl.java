@@ -37,7 +37,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // Tạo JWT token
-        String token = jwtUtil.generateToken(user.getUsername());
+        String token = jwtUtil.generateLoginToken(user.getUsername());
 
         return new LoginResponseDto(true, "Đăng nhập thành công", token, user.getUsername(), user.getRole());
     }

@@ -32,7 +32,7 @@ public class SecurityConfig {
     @Order(0)
     public SecurityFilterChain resources(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/css/**", "/js/**", "/images/**")
+                .securityMatcher("/public/**")
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .requestCache(AbstractHttpConfigurer::disable)
                 .securityContext(AbstractHttpConfigurer::disable)
@@ -73,7 +73,27 @@ public class SecurityConfig {
                         .maximumSessions(1)
                         .expiredUrl(ApiEndpoints.ADMIN_AUTH + "/login?expired")
                 );
+        return http.build();
+    }
 
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/css/**", "/js/**")
+                .requestCache(AbstractHttpConfigurer::disable)
+                .securityContext(AbstractHttpConfigurer::disable)
+                .sessionManagement(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+
+                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
+                    authorizationManagerRequestMatcherRegistry.requestMatchers("/req/**","/css/**","/js/**").permitAll();
+                    authorizationManagerRequestMatcherRegistry.anyRequest().authenticated();
+                })
+
+                .formLogin(httpSecurityFormLoginConfigurer -> {
+                    httpSecurityFormLoginConfigurer.loginPage("/req/login").permitAll();
+                    httpSecurityFormLoginConfigurer.defaultSuccessUrl("/index");
+                });
         return http.build();
     }
 }
