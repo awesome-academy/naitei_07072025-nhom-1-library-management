@@ -2,7 +2,6 @@ package org.librarymanagement.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -48,6 +47,4 @@ public class BorrowRequest {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
-
-
 }

@@ -7,7 +7,7 @@ import org.librarymanagement.constant.ApiEndpoints;
 import org.librarymanagement.constant.RoleConstants;
 import org.librarymanagement.dto.response.LoginResponseDto;
 import org.librarymanagement.dto.request.LoginUserDto;
-import org.librarymanagement.service.impl.AuthServiceImpl;
+import org.librarymanagement.service.AuthService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,15 +17,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @Controller("adminAuthController")
 @RequestMapping(ApiEndpoints.ADMIN_AUTH)
 public class AuthController {
-    private final AuthServiceImpl loginService;
+    private final AuthService loginService;
 
-    public AuthController(AuthServiceImpl loginService) {
+    public AuthController(AuthService loginService) {
         this.loginService = loginService;
     }
 

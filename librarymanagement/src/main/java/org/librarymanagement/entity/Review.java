@@ -2,7 +2,6 @@ package org.librarymanagement.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -34,5 +33,4 @@ public class Review {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
-
 }

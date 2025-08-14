@@ -20,5 +20,4 @@ public class BookAuthor {
     private Author author;
 
     private Integer status;
-
 }

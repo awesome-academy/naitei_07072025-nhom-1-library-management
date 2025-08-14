@@ -2,7 +2,6 @@ package org.librarymanagement.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -33,5 +32,4 @@ public class Publisher {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
-
 }
