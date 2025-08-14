@@ -49,6 +49,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(ApiEndpoints.USER_AUTH + "/**").permitAll()
+                        .requestMatchers(ApiEndpoints.USER_BOOK + "/**").permitAll()
                         .requestMatchers(ApiEndpoints.BASE_USER_URI + "/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 );
