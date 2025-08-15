@@ -22,5 +22,4 @@ public class AppConfig {
         messageSource.setUseCodeAsDefaultMessage(true); // Nếu thiếu key sẽ hiển thị key luôn
         return messageSource;
     }
-
 }

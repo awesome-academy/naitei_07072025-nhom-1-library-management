@@ -28,7 +28,7 @@ public class User {
     private Integer status;
 
     @Column(name = "activated_status", nullable = false)
-    private Integer activatedStatus;
+    private boolean activatedStatus = false;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -47,17 +47,20 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Review> reviews;
 
+    @Column(name = "reset_token")
+    private String resetToken;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<BorrowRequest> borrowRequests;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserInteraction> userInteractions;
 
+    private String verificationToken;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         this.status = 1;
-        this.activatedStatus = 0;
     }
 }
-
