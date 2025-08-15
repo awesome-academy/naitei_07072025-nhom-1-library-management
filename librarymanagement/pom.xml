@@ -29,7 +29,6 @@
     <properties>
         <java.version>17</java.version>
         <jjwt.version>0.12.6</jjwt.version>
-        <thymeleaf-layout.version>3.4.0</thymeleaf-layout.version>
     </properties>
     <dependencies>
         <dependency>
@@ -76,7 +75,6 @@
         <dependency>
             <groupId>nz.net.ultraq.thymeleaf</groupId>
             <artifactId>thymeleaf-layout-dialect</artifactId>
-            <version>${thymeleaf-layout.version}</version>
         </dependency>
 
         <dependency>
