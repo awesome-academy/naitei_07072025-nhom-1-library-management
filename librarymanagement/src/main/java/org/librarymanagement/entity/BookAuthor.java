@@ -2,10 +2,12 @@ package org.librarymanagement.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "book_authors")
 @Data
+@EqualsAndHashCode(exclude = {"book", "author"})
 public class BookAuthor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

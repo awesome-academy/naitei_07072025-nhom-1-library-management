@@ -2,6 +2,7 @@ package org.librarymanagement.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.util.Set;
 @Entity
 @Table(name = "books")
 @Data
+@EqualsAndHashCode(exclude = {"bookAuthors", "bookGenres", "reviews", "publisher"})
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

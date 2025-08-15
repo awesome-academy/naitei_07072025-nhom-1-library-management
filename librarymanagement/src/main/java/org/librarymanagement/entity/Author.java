@@ -5,10 +5,12 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "authors")
 @Data
+@EqualsAndHashCode(exclude = {"bookAuthors"})
 public class Author {
 
     @Id
