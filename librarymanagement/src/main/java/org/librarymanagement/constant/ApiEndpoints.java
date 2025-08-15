@@ -14,4 +14,8 @@ public class ApiEndpoints {
     public static final String ADMIN_AUTH = BASE_ADMIN_URI + "/auth";
     public static final String ADMIN_DASHBOARD = BASE_ADMIN_URI + "/dashboard";
     public static final String ADMIN_BOOK = BASE_ADMIN_URI + "/book";
+    public static final String ADMIN_USER = BASE_ADMIN_URI + "/user";
+    public static final String ADMIN_AUTHOR = BASE_ADMIN_URI + "/author";
+    public static final String ADMIN_PUBLISHER = BASE_ADMIN_URI + "/publisher";
+    public static final String ADMIN_GENRES = BASE_ADMIN_URI + "/genres";
 }

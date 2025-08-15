@@ -30,3 +30,41 @@ body {
         margin-left: 220px;
     }
 }
+
+.pagination .page-link {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+    color: var(--color-normal) !important;
+    background-color: color-mix(in srgb, var(--color-light), white 50%) !important;
+}
+
+.pagination .page-link:hover {
+    background-color: var(--color-light) !important;
+    text-decoration: none;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--color-normal);
+    color: #fff;
+    border-color: var(--color-normal);
+}
+.badge.bg-success {
+    background-color: var(--color-normal) !important;
+}
+.btn-primary {
+    --bs-btn-border-color:: var(--color-normal) !important;
+    --bs-btn-bg: var(--color-normal) !important;
+    --bs-btn-hover-bg: var(--color-normal-hover) !important;
+}
+.btn-secondary {
+    background-color: var(--color-light-active) !important;
+    --bs-btn-border-color: var(--color-light-active) !important;
+    --bs-btn-hover-border-color: var(--color-light-active) !important;
+    color: var(--color-darker) !important;
+}
