@@ -38,4 +38,15 @@ public class BorrowRequestController {
         return ResponseEntity.status(responseObject.status())
                 .body(responseObject);
     }
+
+    @GetMapping("/returned")
+    public ResponseEntity<ResponseObject> getReturnedBooks() {
+
+        User user = currentUserService.getCurrentUser();
+
+        ResponseObject responseObject = borrowRequestService.getReturnedBorrowRequests(user);
+
+        return ResponseEntity.status(responseObject.status())
+                .body(responseObject);
+    }
 }

@@ -31,6 +31,9 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
     private final BorrowRequestRepository borrowRequestRepository;
     private final BorrowRequestItemRepository borrowRequestItemRepository;
 
+    private static final int RETURN = 1;
+    private static final int PENDING = 2;
+
     public BorrowRequestServiceImpl(MessageSource messageSource,
                                     BorrowRequestRepository borrowRequestRepository,
                                     BorrowRequestItemRepository borrowRequestItemRepository) {
@@ -66,7 +69,7 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
                         borrowRequest.getQuantity(),
                         convertBorrowRequestStatusToString(borrowRequest.getStatus()),
                         borrowRequest.getDayConfirmed(),
-                        convertBRItemToResponse(borrowRequestItemRepository.findBorrowRequestItemByBorrowRequest(borrowRequest))
+                        convertBRItemToResponse(borrowRequestItemRepository.findBorrowRequestItemByBorrowRequest(borrowRequest), PENDING)
                 ))
                 .toList();
 
@@ -83,7 +86,51 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
         );
     }
 
-    private List<BorrowRequestItemResponse> convertBRItemToResponse(List<BorrowRequestItem> borrowRequestItems) {
+    public ResponseObject getReturnedBorrowRequests(User user) {
+        List<BorrowRequest> borrowRequests = borrowRequestRepository.findBorrowRequestByUser(user);
+
+        List<BorrowRequestResponse> returnedBorrowRequests = new ArrayList<>();
+
+        returnedBorrowRequests = borrowRequests.stream()
+                .map(borrowRequest -> {
+
+                    List<BorrowRequestItem> borrowRequestItems = borrowRequestItemRepository.findBorrowRequestItemByBorrowRequest(borrowRequest);
+
+                    List<BorrowRequestItem> returnedBorrowRequestItems = borrowRequestItems.stream()
+                            .filter(b -> b.getStatus().equals(BRItemStatusConstant.RETURNED))
+                            .toList();
+
+                    List<BorrowRequestItemResponse> borrowRequestItemResponses = convertBRItemToResponse(returnedBorrowRequestItems, RETURN);
+
+                    if(borrowRequestItemResponses.isEmpty()) {
+                        return null;
+                    }
+
+                    return new BorrowRequestResponse(
+                            borrowRequest.getId(),
+                            borrowRequest.getQuantity(),
+                            convertBorrowRequestStatusToString(borrowRequest.getStatus()),
+                            borrowRequest.getDayConfirmed(),
+                            borrowRequestItemResponses
+                    );
+                })
+                .filter(Objects::nonNull)
+                .toList();
+
+        String successMessage = messageSource.getMessage(
+                "user.borrowBooks.returnedBook",
+                null,
+                LocaleContextHolder.getLocale()
+        );
+
+        return new ResponseObject(
+                successMessage,
+                200,
+                returnedBorrowRequests
+        );
+    }
+
+    private List<BorrowRequestItemResponse> convertBRItemToResponse(List<BorrowRequestItem> borrowRequestItems, int functionType) {
 
         if (borrowRequestItems == null) {
             return new ArrayList<>();
@@ -106,19 +153,46 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
                     Publisher publisher = book.getPublisher();
                     String publisherName = (publisher != null) ? publisher.getName() : "N/A";
 
-                    return new BorrowRequestItemResponse(
-                            borrowRequestItem.getId(),
-                            convertBRItemStatusToString(borrowRequestItem.getStatus()),
-                            new BookVersionResponse(
-                                    convertBookVersionStatusToString(bookVersion.getStatus()),
-                                    book.getTitle(),
-                                    publisherName
-                            )
-                    );
+                    return switch (functionType) {
+                        case RETURN -> new BorrowRequestItemResponse(
+                                borrowRequestItem.getId(),
+                                convertBRItemStatusToString(borrowRequestItem.getStatus()),
+                                new BookVersionResponse(
+                                        convertBookVersionStatusToString(bookVersion.getStatus()),
+                                        book.getTitle(),
+                                        publisherName,
+                                        createReviewLink(book.getSlug())
+                                )
+                        );
+                        case PENDING -> new BorrowRequestItemResponse(
+                                borrowRequestItem.getId(),
+                                convertBRItemStatusToString(borrowRequestItem.getStatus()),
+                                new BookVersionResponse(
+                                        convertBookVersionStatusToString(bookVersion.getStatus()),
+                                        book.getTitle(),
+                                        publisherName,
+                                        null
+                                )
+                        );
+                        default -> null;
+                    };
                 })
+                .filter(Objects::nonNull)
                 .toList();
 
         return borrowRequestItemResponses;
+    }
+
+    private LinkResponse createReviewLink(String slug){
+        String link = new String("http://localhost:8080/api/books/");
+
+        link = link + slug + "/reviews";
+
+        return new LinkResponse(
+                link,
+                "reviews",
+                "Hãy đánh giá sách này"
+        );
     }
 
     private String convertBRItemStatusToString(int status){
