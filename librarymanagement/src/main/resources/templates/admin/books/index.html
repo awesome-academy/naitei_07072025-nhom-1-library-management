@@ -25,15 +25,137 @@
                 </div>
             </div>
 
+            <form th:action="@{/admin/books}" method="get" class="row g-2 mb-3"
+                  onsubmit="this.querySelectorAll('[name]').forEach(i => !i.value && i.removeAttribute('name'));">
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="author"
+                           placeholder="Tác giả"
+                           th:value="${author}">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="publisher"
+                           placeholder="Nhà xuất bản"
+                           th:value="${publisher}">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="genre"
+                           placeholder="Thể loại"
+                           th:value="${genre}">
+                </div>
+                <div class="col-md-1">
+                    <select name="size" class="form-select">
+                        <option th:value="5" th:selected="${size == 5}">5</option>
+                        <option th:value="10" th:selected="${size == 10}">10</option>
+                        <option th:value="20" th:selected="${size == 20}">20</option>
+                        <option th:value="50" th:selected="${size == 50}">50</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-success w-100">Lọc</button>
+                </div>
+            </form>
+
             <div class="row">
                 <div class="col-12 col-lg-12 col-xxl-12 d-flex">
                     <div class="card flex-fill">
-                        <div th:replace="~{fragments/table :: table(#{table.bookname}, #{table.author},
-                            #{table.publishDate}, #{table.status}, #{table.button-view}, #{table.button-edit},
-                            #{table.button-delete})}"></div>
+                        <table class="table table-hover my-0">
+                            <thead>
+                            <tr>
+                                <th class="d-none d-xl-table-cell text-center" th:text="#{table.bookname}"></th>
+                                <th class="d-none d-xl-table-cell text-center" th:text="#{table.author}"></th>
+                                <th class="d-none d-xl-table-cell text-center" th:text="#{table.publisher}"></th>
+                                <th class="d-none d-xl-table-cell text-center" th:text="#{table.status}"></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="book : ${books}">
+                                <td class="d-none d-xl-table-cell text-center" th:text="${book.bookTitle}"></td>
+                                <td class="d-none d-xl-table-cell text-center"
+                                    th:text="${#strings.arrayJoin(book.bookAuthors.toArray(), ', ')}"></td>
+                                <td class="d-none d-xl-table-cell text-center" th:text="${book.bookPublisher}"></td>
+                                <td class="d-none d-xl-table-cell text-center">
+                                    <span class="badge"
+                                          th:text="${book.totalCurrent > 0 ? 'Còn sách' : 'Tạm hết'}"
+                                          th:classappend="${book.totalCurrent > 0 ? ' bg-success' : ' bg-danger'}">
+                                    </span>
+                                </td>
+                                <td class="d-none d-xl-table-cell text-center" style="padding: 8px;">
+                                    <a th:href="@{'/admin/books/' + ${book.id}}"
+                                       class="btn btn-primary"
+                                       th:text="#{table.button-view}">
+                                    </a>
+
+                                    <a th:href="@{'/admin/books/edit/' + ${book.id}}"
+                                       class="btn btn-warning"
+                                       th:text="#{table.button-edit}">
+                                    </a>
+
+                                    <button type="button" class="btn btn-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#confirmDeleteModal"
+                                            th:text="#{table.button-delete}">
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mt-3">
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link" aria-label="Previous"
+                            th:href="@{/admin/books(page=${currentPage-1},
+                                size=${size},
+                                author=${author},
+                                publisher=${publisher},
+                                genre=${genre})}"
+                            onclick="this.href=this.href.replace(/(&?author=(&|$))|(&?publisher=(&|$))|(&?genre=(&|$))/g,'');">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item"
+                        th:if="${totalPages > 0}"
+                        th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+                        th:classappend="${i == currentPage} ? ' active'">
+                        <a class="page-link"
+                            th:text="${i + 1}"
+                            th:href="@{/admin/books(page=${i},
+                                size=${size},
+                                author=${author},
+                                publisher=${publishe},
+                                genre=${genre})}"
+                            onclick="this.href=this.href.replace(/(&?author=(&|$))|(&?publisher=(&|$))|(&?genre=(&|$))/g,'');">
+                        </a>
+                    </li>
+                    <li class="page-item active"
+                        th:if="${totalPages == 0}">
+                        <a class="page-link"
+                            th:text="${1}"
+                            th:href="@{/admin/books(page=${1},
+                                size=${size},
+                                author=${author},
+                                publisher=${publisher},
+                                genre=${genre})}"
+                            onclick="this.href=this.href.replace(/(&?author=(&|$))|(&?publisher=(&|$))|(&?genre=(&|$))/g,'');">
+                        </a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${currentPage+1 >= totalPages} ? 'disabled'">
+                        <a class="page-link" href="#" aria-label="Next"
+                            th:href="@{/admin/books(page=${currentPage+1},
+                                size=${size},
+                                author=${author},
+                                publisher=${publisher},
+                                genre=${genre})}"
+                            onclick="this.href=this.href.replace(/(&?author=(&|$))|(&?publisher=(&|$))|(&?genre=(&|$))/g,'');">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
     <div th:if="${message}"
@@ -45,6 +167,7 @@
         </ul>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+    <div th:replace="~{fragments/table :: deleteTable}"></div>
     <script th:src="@{/public/js/admin/book.js}"></script>
 </div>
 </body>

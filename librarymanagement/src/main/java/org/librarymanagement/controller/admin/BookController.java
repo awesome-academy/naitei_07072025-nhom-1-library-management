@@ -2,10 +2,15 @@ package org.librarymanagement.controller.admin;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.librarymanagement.constant.ApiEndpoints;
+import org.librarymanagement.dto.response.BookListDto;
 import org.librarymanagement.service.BookService;
 import org.librarymanagement.utils.ExcelValidator;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +33,43 @@ public class BookController {
     }
 
     @GetMapping
-    public String showBooklist() {
+    public String showBooklist(
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) String publisher,
+            @RequestParam(required = false) String genre,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "20") int size,
+            Model model
+    ) {
+        model.addAttribute("author", (author == null || author.isBlank()) ? null : author);
+        model.addAttribute("publisher", (publisher == null || publisher.isBlank()) ? null : publisher);
+        model.addAttribute("genre", (genre == null || genre.isBlank()) ? null : genre);
+
+        Pageable pageable = PageRequest.of(page, 20);
+        Page<BookListDto> bookPage = bookService.findAllBooksWithFilter(author, publisher, genre, pageable);
+        int totalPages = bookPage.getTotalPages();
+
+        // Danh sách rỗng
+        if (totalPages == 0) {
+            model.addAttribute("books", List.of());
+            model.addAttribute("totalPages", 0);
+            model.addAttribute("currentPage", 1);
+            model.addAttribute("size", size);
+        }
+        // Page vượt quá tổng số trang, chuyển về trang có số trang lớn nhất
+        else if (page >= totalPages) {
+            return "redirect:/admin/books?page=" + (totalPages - 1)
+                    + (author != null ? "&author=" + author : "")
+                    + (publisher != null ? "&publisher=" + publisher : "")
+                    + (genre != null ? "&genre=" + genre : "")
+                    + "&size=" + size;
+        }
+        else {
+            model.addAttribute("books", bookPage.getContent());
+            model.addAttribute("totalPages", totalPages);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("size", size);
+        }
         return "admin/books/index";
     }
 
