@@ -7,5 +7,6 @@ import java.util.Set;
 public record BookVersionResponse(
         String status,
         String title,
-        String publisherName
+        String publisherName,
+        LinkResponse reviewLink
 ) {}
