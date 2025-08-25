@@ -16,12 +16,83 @@
                 </h1>
             </div>
 
+            <form th:action="@{/admin/borrow-requests}" method="get" class="mb-3"
+                  onsubmit="this.querySelectorAll('[name]').forEach(i => !i.value && i.removeAttribute('name'));">
+                <select name="status" class="form-select w-auto d-inline-block">
+                    <option value="" th:selected="${status == null}">Tất cả</option>
+                    <option th:value="0" th:selected="${status == 0}">Đang chờ</option>
+                    <option th:value="1" th:selected="${status == 1}">Hoàn tất</option>
+                    <option th:value="2" th:selected="${status == 2}">Đã hủy</option>
+                </select>
+                <button type="submit" class="btn btn-primary">Lọc</button>
+            </form>
+
             <div class="row">
                 <div class="col-12 col-lg-12 col-xxl-12 d-flex">
                     <div class="card flex-fill">
-                        <div th:replace="~{fragments/table :: table(#{table.name}, #{table.bookname},
-                            #{table.borrowDate}, #{table.status}, #{table.button-view}, #{table.button-accept},
-                            #{table.button-delete})}"></div>
+                        <table class="table table-hover my-0">
+                            <thead>
+                            <tr>
+                                <th class="d-none d-xl-table-cell text-center" th:text="#{table.name}"></th>
+                                <th class="d-none d-xl-table-cell text-center" th:text="#{table.bookname}"></th>
+                                <th class="d-none d-xl-table-cell text-center" th:text="#{table.borrowDate}"></th>
+                                <th class="d-none d-xl-table-cell text-center" th:text="#{table.status}"></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="item : ${borrowRequests}">
+                                <td class="d-none d-xl-table-cell text-center" th:text="${item.username}"></td>
+                                <td class="d-none d-xl-table-cell text-center" th:text="${item.totalBooks}"></td>
+                                <td class="d-none d-xl-table-cell text-center"
+                                    th:text="${#temporals.format(item.borrowDate, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td class="d-none d-xl-table-cell text-center">
+                                    <span class="badge"
+                                          th:text="${item.status == 1 ? 'Hoàn tất'
+                                              : (item.status == 0 ? 'Đang chờ'
+                                              : 'Đã huỷ')}"
+                                          th:classappend="${item.status == 1 ? ' bg-success'
+                                              : (item.status == 0 ? ' bg-warning'
+                                              : ' bg-danger')}">
+                                    </span>
+                                </td>
+                                <td class="d-none d-xl-table-cell text-center" style="padding: 8px;">
+                                    <button type="button" class="btn btn-primary" th:text="#{table.button-view}"></button>
+                                    <button type="button" class="btn btn-warning" th:text="#{table.button-accept}"></button>
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                            data-bs-target="#confirmDeleteModal" th:text="#{table.button-delete}">
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center mt-3">
+                                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                    <a class="page-link" aria-label="Previous"
+                                       th:href="@{/admin/borrow-requests(page=${currentPage-1}, status=${status})}">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+
+                                <li class="page-item"
+                                    th:if="${totalPages > 0}"
+                                    th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+                                    th:classappend="${i == currentPage} ? ' active'">
+                                    <a class="page-link"
+                                       th:text="${i + 1}"
+                                       th:href="@{/admin/borrow-requests(page=${i}, status=${status})}">
+                                    </a>
+                                </li>
+
+                                <li class="page-item" th:classappend="${currentPage+1 >= totalPages} ? 'disabled'">
+                                    <a class="page-link" aria-label="Next"
+                                       th:href="@{/admin/borrow-requests(page=${currentPage+1}, status=${status})}">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
