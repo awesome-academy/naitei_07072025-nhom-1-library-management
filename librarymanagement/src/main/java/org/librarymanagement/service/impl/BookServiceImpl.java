@@ -261,14 +261,20 @@ public class BookServiceImpl implements BookService {
     /*Tìm kiếm sách - 91162*/
     @Override
     @Transactional(readOnly = true)
-    public List<BookResponseDto> searchBooks(String keyword) {
-        List<BookSearchFlatDto> flat = bookRepository.searchBooks(keyword);
+    public Page<BookResponseDto> searchBooks(String keyword, Pageable pageable) {
+        Page<BookSearchFlatDto> flat = bookRepository.searchBooks(keyword, pageable);
 
         if(flat.isEmpty()){
             throw new NotFoundException("Không tìm thấy sách với từ khóa " + keyword);
         }
 
-        Map<Integer, Set<String>> authorsMap = flat.stream()
+        List<Integer> bookIds = flat.getContent().stream()
+                .map(BookSearchFlatDto::id)
+                .collect(Collectors.toList());
+
+        List<BookSearchFlatDto> allBookData = bookRepository.findAllBookDataByIds(bookIds);
+
+        Map<Integer, Set<String>> authorsMap = allBookData.stream()
                 .filter(dto -> dto.bookAuthor() != null)
                 .collect(Collectors.groupingBy(
                         BookSearchFlatDto::id,
@@ -276,7 +282,7 @@ public class BookServiceImpl implements BookService {
                         Collectors.mapping(BookSearchFlatDto::bookAuthor, Collectors.toSet())
                 ));
 
-        Map<Integer, Set<String>> genresMap = flat.stream()
+        Map<Integer, Set<String>> genresMap = allBookData.stream()
                 .filter(dto -> dto.bookGenre() != null)
                 .collect(Collectors.groupingBy(
                         BookSearchFlatDto::id,
@@ -284,25 +290,20 @@ public class BookServiceImpl implements BookService {
                         Collectors.mapping(BookSearchFlatDto::bookGenre, Collectors.toSet())
                 ));
 
-        List<BookResponseDto> results = flat.stream()
-                .collect(Collectors.collectingAndThen(
-                        Collectors.toMap(
-                                BookSearchFlatDto::id,
-                                dto -> new BookResponseDto(
-                                        dto.id(),
-                                        dto.image(),
-                                        dto.title(),
-                                        dto.description(),
-                                        dto.publishedDay(),
-                                        dto.publisherName(),
-                                        authorsMap.getOrDefault(dto.id(), Set.of()),
-                                        genresMap.getOrDefault(dto.id(), Set.of())
-                                ),
-                                (existing, newDto) -> existing,
-                                LinkedHashMap::new
-                        ),
-                        m -> new ArrayList<>(m.values())
-                ));
-        return results;
+        List<BookResponseDto> results = flat.getContent().stream()
+                .map(dto -> new BookResponseDto(
+                        dto.id(),
+                        dto.image(),
+                        dto.title(),
+                        dto.description(),
+                        dto.publishedDay(),
+                        dto.publisherName(),
+                        authorsMap.getOrDefault(dto.id(), Set.of()),
+                        genresMap.getOrDefault(dto.id(), Set.of())
+                ))
+                .distinct()
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(results, pageable, flat.getTotalElements());
     }
 }

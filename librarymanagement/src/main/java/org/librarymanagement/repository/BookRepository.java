@@ -11,8 +11,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book,Integer> {
@@ -57,5 +57,24 @@ public interface BookRepository extends JpaRepository<Book,Integer> {
             OR LOWER(g.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
             OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
     """)
-    List<BookSearchFlatDto> searchBooks(@Param("keyword") String keyword);
+    Page<BookSearchFlatDto> searchBooks(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("""
+            SELECT new org.librarymanagement.dto.response.BookSearchFlatDto(
+                b.id,
+                b.image,
+                b.title,
+                b.description,
+                b.publishedDay,
+                p.name,
+                a.name,
+                g.name
+            )
+            FROM Book b
+            LEFT JOIN b.publisher p
+            LEFT JOIN b.bookAuthors ba LEFT JOIN ba.author a
+            LEFT JOIN b.bookGenres bg LEFT JOIN bg.genre g
+            WHERE b.id IN :bookIds
+    """)
+    List<BookSearchFlatDto> findAllBookDataByIds(@Param("bookIds") List<Integer> bookIds);
 }
