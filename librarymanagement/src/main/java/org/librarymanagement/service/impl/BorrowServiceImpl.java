@@ -5,6 +5,7 @@ import org.librarymanagement.constant.BRItemStatusConstant;
 import org.librarymanagement.constant.BRStatusConstant;
 import org.librarymanagement.constant.BookVersionConstants;
 import org.librarymanagement.constant.RoleConstants;
+import org.librarymanagement.dto.response.BorrowRequestRawDto;
 import org.librarymanagement.dto.response.BorrowRequestSummaryDto;
 import org.librarymanagement.dto.response.BorrowResponse;
 import org.librarymanagement.dto.response.ResponseObject;
@@ -25,6 +26,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.librarymanagement.constant.BRItemStatusConstant.PENDING;
 
 @Service
 public class BorrowServiceImpl implements BorrowService {
@@ -74,7 +77,7 @@ public class BorrowServiceImpl implements BorrowService {
     public ResponseObject borrowBook(Map<Integer, Integer> bookBorrows, User user)
     {
         BorrowRequest borrowRequest = new BorrowRequest();
-        borrowRequest.setStatus(BRStatusConstant.PENDING);
+        borrowRequest.setStatus(PENDING);
         borrowRequest.setCreatedAt(LocalDateTime.now());
         borrowRequest.setUser(user); // chỉ set user thôi, không add vào user.getBorrowRequests()
 
@@ -108,7 +111,7 @@ public class BorrowServiceImpl implements BorrowService {
                             BorrowRequestItem item = new BorrowRequestItem();
                             item.setBookVersion(bookVersion);
                             item.setBorrowRequest(borrowRequest);
-                            item.setStatus(BRItemStatusConstant.PENDING);
+                            item.setStatus(PENDING);
                             item.setCreatedAt(RoleConstants.DATE_TIME);
                             item.setDayExpired(RoleConstants.DATE_TIME.plusDays(3));
 
@@ -143,6 +146,14 @@ public class BorrowServiceImpl implements BorrowService {
     }
 
     public Page<BorrowRequestSummaryDto> getAllRequests(Integer status, Pageable pageable) {
-        return borrowRequestRepository.findAllByStatus(status, pageable);
+        Page<BorrowRequestRawDto> rawPage = borrowRequestRepository.findAllByStatus(status, pageable);
+
+        return rawPage.map(raw -> new BorrowRequestSummaryDto(
+                raw.id(),
+                raw.username(),
+                raw.totalBooks(),
+                raw.borrowDate(),
+                BRStatusConstant.fromValue(raw.status()) // convert int → enum
+        ));
     }
 }

@@ -22,6 +22,11 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.librarymanagement.constant.BRItemStatusConstant.CANCELLED;
+import static org.librarymanagement.constant.BRItemStatusConstant.PENDING;
+import static org.librarymanagement.constant.BRStatusConstant.COMPLETED;
+import static org.librarymanagement.constant.BRStatusConstant.fromValue;
+
 @Service
 @Transactional(readOnly=true)
 @Slf4j
@@ -64,7 +69,7 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
                 .map(borrowRequest -> new BorrowRequestResponse(
                         borrowRequest.getId(),
                         borrowRequest.getQuantity(),
-                        convertBorrowRequestStatusToString(borrowRequest.getStatus()),
+                        fromValue(borrowRequest.getStatus()).getLabel(),
                         borrowRequest.getDayConfirmed(),
                         convertBRItemToResponse(borrowRequestItemRepository.findBorrowRequestItemByBorrowRequest(borrowRequest))
                 ))
@@ -139,15 +144,6 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
             case BookVersionConstants.BORROWED -> "BORROWED";
             case BookVersionConstants.RESERVED -> "RESERVED";
             case BookVersionConstants.REPAIRING -> "REPAIRING";
-            default -> "";
-        };
-    }
-
-    private String convertBorrowRequestStatusToString(int status){
-        return switch (status) {
-            case BRStatusConstant.PENDING -> "PENDING";
-            case BRStatusConstant.COMPLETED -> "COMPLETED";
-            case BRStatusConstant.CANCELLED -> "CANCELLED";
             default -> "";
         };
     }
