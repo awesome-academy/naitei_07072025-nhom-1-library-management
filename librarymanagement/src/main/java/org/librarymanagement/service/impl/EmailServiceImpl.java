@@ -51,6 +51,37 @@ public class EmailServiceImpl implements EmailService {
             content = content.replace("${subject}", template.getSubject());
             content = content.replace("${message}", template.getMessage());
             content = content.replace("${actionUrl}", actionUrl);
+            //Thay thế các biến giữ chỗ trong template
+            content = content.replace("${subject}", template.getSubject());
+            content = content.replace("${message}", template.getMessage());
+            content = content.replace("${actionUrl}", actionUrl);
+
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            helper.setTo(email);
+            helper.setSubject(template.getSubject());
+            helper.setFrom(from);
+            helper.setText(content, true);
+            mailSender.send(mimeMessage);
+
+        } catch (Exception e){
+            log.error("Không thể gửi email tới địa chỉ: {}. Lỗi: {}", email, e.getMessage(), e);
+        }
+    }
+
+    public void sendEmailTemp(String email,EmailType type, String url)
+    {
+        EmailTemplate template = EmailTemplateMapper.getTemplateByType(type);
+
+        try {
+            String content = readEmailTemplate(url);
+
+            //Tạo URL hành động
+
+            //Thay thế các biến giữ chỗ trong template
+            content = content.replace("${subject}", template.getSubject());
+            content = content.replace("${message}", template.getMessage());
 
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");

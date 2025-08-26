@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "borrow_requests")
+@EqualsAndHashCode(exclude = {"user", "borrowRequestItems"})
 @Data
 public class BorrowRequest {
 
@@ -32,6 +33,9 @@ public class BorrowRequest {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "lastReminderSent_at")
+    private LocalDateTime lastReminderSentAt;
 
     @OneToMany(mappedBy = "borrowRequest", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<BorrowRequestItem> borrowRequestItems;

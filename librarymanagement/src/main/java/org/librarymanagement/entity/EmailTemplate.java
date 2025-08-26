@@ -8,7 +8,27 @@ public enum EmailTemplate {
     RESET_PASSWORD(
             "Khôi phục mật khẩu",
             "api/auth/register/password/reset",
-            "Nhấn để đổi mật khẩu");
+            "Nhấn để đổi mật khẩu"),
+
+    OVERDUE_BORROW_REQUEST(
+            "Thông báo",
+            "",
+            "Bạn đã quá hạn thời gian mượn sách, hay mang đến trả thư viện"
+    ),
+
+    OVERDUE_BORROW_REQUEST_REPEAT(
+            "Cảnh cáo",
+            "",
+            "Bạn vẫn chưa trả sách , hay mang đến trả thư viện !!"
+    ),
+
+    RESERVED_OVERDUE_BORROW_REQUEST(
+            "Thông báo",
+            "",
+            "Yêu cầu mượn sách của bạn bị hủy do quá thời gian giữ sách !!"
+    );
+
+
 
     private final String subject;
     private final String path;

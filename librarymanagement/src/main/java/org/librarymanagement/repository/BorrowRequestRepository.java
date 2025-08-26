@@ -5,6 +5,7 @@ import org.librarymanagement.entity.BorrowRequest;
 import org.librarymanagement.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,4 +34,8 @@ public interface BorrowRequestRepository extends JpaRepository<BorrowRequest, In
             @Param("status") Integer status,
             Pageable pageable
     );
+
+    @Query("SELECT bri FROM BorrowRequest bri WHERE bri.status IN (:statuses)")
+    @EntityGraph(attributePaths = {"user", "borrowRequestItems"})
+    List<BorrowRequest> findByStatuses(@Param("statuses") List<Integer> statuses);
 }
