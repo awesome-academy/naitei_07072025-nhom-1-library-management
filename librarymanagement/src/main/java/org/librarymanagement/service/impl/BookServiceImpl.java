@@ -13,8 +13,8 @@ import org.librarymanagement.dto.response.UserResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.librarymanagement.dto.response.BookDto;
-import org.librarymanagement.dto.response.BookFlatDto;
+import org.librarymanagement.dto.response.BookListDto;
+import org.librarymanagement.dto.response.BookRawDto;
 import org.librarymanagement.entity.Book;
 import org.librarymanagement.entity.BookAuthor;
 import org.librarymanagement.entity.Publisher;
@@ -52,30 +52,44 @@ public class BookServiceImpl implements BookService {
         this.publisherService = publisherService;
     }
 
-    public Page<BookDto> findAllBooksWithFilter(Pageable pageable) {
-        Page<BookFlatDto> rawBooks = bookRepository.findAllBooksFlat(pageable);
+    public Page<BookListDto> findAllBooksWithFilter(String author, String publisher, String genre, Pageable pageable) {
+        Page<BookRawDto> rawBooks = bookRepository.findAllBooksRaw(author, publisher, genre, pageable);
 
-        // Step 1: Group theo sách (title + publisher) và gom tác giả
-        Map<String, Set<String>> authorsMap = rawBooks.getContent().stream()
+        // Step 1: Group theo sách (title + publisher)
+        // Gom authors
+        Map<Integer, Set<String>> authorsMap = rawBooks.getContent().stream()
+                .filter(dto -> dto.bookAuthor() != null)
                 .collect(Collectors.groupingBy(
-                        dto -> dto.bookTitle() + "|" + dto.bookPublisher(), // key duy nhất cho 1 sách
+                        BookRawDto::id,
                         LinkedHashMap::new,
-                        Collectors.mapping(BookFlatDto::bookAuthor, Collectors.toSet())
+                        Collectors.mapping(BookRawDto::bookAuthor, Collectors.toSet())
+                ));
+
+        // Gom genres
+        Map<Integer, Set<String>> genresMap = rawBooks.getContent().stream()
+                .filter(dto -> dto.bookGenre() != null)
+                .collect(Collectors.groupingBy(
+                        BookRawDto::id,
+                        LinkedHashMap::new,
+                        Collectors.mapping(BookRawDto::bookGenre, Collectors.toSet())
                 ));
 
         // Step 2: Map sang BookDto
-        List<BookDto> dtos = rawBooks.getContent().stream()
+        List<BookListDto> dtos = rawBooks.getContent().stream()
                 .collect(Collectors.collectingAndThen(
                         Collectors.toMap(
-                                dto -> dto.bookTitle() + "|" + dto.bookPublisher(),
-                                dto -> new BookDto(
+                                BookRawDto::id,
+                                dto -> new BookListDto(
+                                        dto.id(),
                                         dto.bookImage(),
                                         dto.bookTitle(),
                                         dto.bookDescription(),
-                                        authorsMap.get(dto.bookTitle() + "|" + dto.bookPublisher()), // Set tác giả
-                                        dto.bookPublisher()
+                                        authorsMap.getOrDefault(dto.id(), Set.of()), // gom nhiều tác giả
+                                        dto.bookPublisher(),
+                                        genresMap.getOrDefault(dto.id(), Set.of()),
+                                        dto.totalCurrent()
                                 ),
-                                (existing, newDto) -> existing, // nếu trùng key, giữ existing
+                                (existing, newDto) -> existing,
                                 LinkedHashMap::new
                         ),
                         m -> new ArrayList<>(m.values())
