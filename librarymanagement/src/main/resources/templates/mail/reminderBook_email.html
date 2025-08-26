@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>${subject}</title>
+    <style>
+        /* Một chút fallback CSS cho client hỗ trợ <style> */
+        @media (max-width: 600px) {
+            .container { width: 100% !important; padding: 16px !important; }
+            .content { padding: 16px !important; }
+            .footer { padding: 16px !important; }
+        }
+    </style>
+</head>
+<body style="margin:0; padding:0; background:#f6f7f9; font-family:Arial,Helvetica,sans-serif; color:#1f2937;">
+<!-- Wrapper -->
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#f6f7f9;">
+    <tr>
+        <td align="center" style="padding: 24px;">
+            <!-- Container -->
+            <table role="presentation" class="container" border="0" cellpadding="0" cellspacing="0" width="600" style="width:600px; max-width:100%; background:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,0.06);">
+                <!-- Header -->
+                <tr>
+                    <td style="background:#0ea5e9; padding: 20px 24px;">
+                        <table role="presentation" width="100%">
+                            <tr>
+                                <td style="color:#ffffff; font-size:18px; font-weight:bold;">Thư viện của bạn</td>
+                                <td align="right" style="color:#ffffff; font-size:12px;">${subject}</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Hero / Title -->
+                <tr>
+                    <td class="content" style="padding: 24px;">
+                        <h1 style="margin:0 0 8px; font-size:20px; line-height:1.4; color:#111827;">${subject}</h1>
+                        <p style="margin:0; font-size:14px; color:#6b7280;">Thông báo nhắc nhở từ hệ thống thư viện</p>
+                    </td>
+                </tr>
+
+                <!-- Message Body -->
+                <tr>
+                    <td class="content" style="padding: 0 24px 8px;">
+                        <div style="border-top:1px solid #e5e7eb; margin: 8px 0 16px;"></div>
+                        <p style="margin:0 0 12px; font-size:15px; line-height:1.7; color:#374151;">
+                            ${message}
+                        </p>
+                    </td>
+                </tr>
+                <!-- Footer -->
+                <tr>
+                    <td class="footer" style="padding: 20px 24px 24px; color:#6b7280; font-size:12px;">
+                        <div style="border-top:1px solid #e5e7eb; margin-bottom:12px;"></div>
+                        <p style="margin:0 0 6px;">Thư viện ABC</p>
+                        <p style="margin:0 0 6px;">Hotline: 0123 456 789 • Email: support@library.example</p>
+                        <p style="margin:0;">Bạn nhận được email này vì đang sử dụng dịch vụ mượn sách của thư viện.</p>
+                    </td>
+                </tr>
+            </table>
+            <!-- /Container -->
+        </td>
+    </tr>
+</table>
+<!-- /Wrapper -->
+</body>
+</html>
