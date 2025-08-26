@@ -5,6 +5,7 @@ import org.librarymanagement.constant.BRItemStatusConstant;
 import org.librarymanagement.constant.BRStatusConstant;
 import org.librarymanagement.constant.BookVersionConstants;
 import org.librarymanagement.constant.RoleConstants;
+import org.librarymanagement.dto.response.BorrowRequestSummaryDto;
 import org.librarymanagement.dto.response.BorrowResponse;
 import org.librarymanagement.dto.response.ResponseObject;
 import org.librarymanagement.entity.*;
@@ -17,6 +18,8 @@ import org.librarymanagement.repository.BorrowRequestRepository;
 import org.librarymanagement.service.BorrowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -137,5 +140,9 @@ public class BorrowServiceImpl implements BorrowService {
         BorrowResponse borrowResponse = new BorrowResponse(user.getUsername(),bookTitleMap,sumQuantity);
         String successMessage = messageSource.getMessage("query.borrow.success", null, Locale.getDefault());
         return new ResponseObject(successMessage, 200, borrowResponse);
-}
+    }
+
+    public Page<BorrowRequestSummaryDto> getAllRequests(Integer status, Pageable pageable) {
+        return borrowRequestRepository.findAllByStatus(status, pageable);
+    }
 }
