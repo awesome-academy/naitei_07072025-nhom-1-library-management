@@ -31,6 +31,9 @@ public class BorrowRequest {
     @Column(nullable = false)
     private Integer status;
 
+    @Column(name = "cancel_reason")
+    private String cancelReason;
+
     @Column(name = "day_confirmed")
     private LocalDateTime dayConfirmed;
 

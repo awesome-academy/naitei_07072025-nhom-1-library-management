@@ -94,6 +94,7 @@ public class BRCleanupServiceImpl implements BRCleanupService {
         overdueBorrows.forEach(br ->{
             handleSendMail(br,EmailType.RESERVED_OVERDUE_BORROW_REQUEST);
             br.setStatus((BRStatusConstant.CANCELED.getValue()));
+            br.setCancelReason("Vì đã quá thời gian giữ sách là 3 ngày nên yêu cầu mượn bị hủy");
 
             br.getBorrowRequestItems().forEach(brItem -> {
                 brItem.setStatus((BRItemStatusConstant.CANCELLED));
