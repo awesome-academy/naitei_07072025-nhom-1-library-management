@@ -28,7 +28,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.librarymanagement.constant.BRItemStatusConstant.PENDING;
-
 @Service
 public class BorrowServiceImpl implements BorrowService {
     private final BookVersionRepository bookVersionRepository;
@@ -77,7 +76,7 @@ public class BorrowServiceImpl implements BorrowService {
     public ResponseObject borrowBook(Map<Integer, Integer> bookBorrows, User user)
     {
         BorrowRequest borrowRequest = new BorrowRequest();
-        borrowRequest.setStatus(PENDING);
+        borrowRequest.setStatus(BRStatusConstant.PENDING.getValue());
         borrowRequest.setCreatedAt(LocalDateTime.now());
         borrowRequest.setUser(user); // chỉ set user thôi, không add vào user.getBorrowRequests()
 
@@ -155,5 +154,38 @@ public class BorrowServiceImpl implements BorrowService {
                 raw.borrowDate(),
                 BRStatusConstant.fromValue(raw.status()) // convert int → enum
         ));
+    }
+
+    @Transactional
+    public boolean acceptBorrowRequest(Integer requestId) {
+        // Tìm BorrowRequest hoặc ném lỗi nếu không tìm thấy
+        BorrowRequest borrowRequest = borrowRequestRepository.findById(requestId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy phiếu mượn với id: " + requestId));
+
+        // Cập nhật trạng thái của BorrowRequest
+        borrowRequest.setDayConfirmed(LocalDateTime.now());
+        borrowRequest.setStatus(BRStatusConstant.COMPLETED.getValue());
+
+        // Sử dụng stream để cập nhật trạng thái của các BorrowRequestItem và thu thập các BookVersion
+        List<BookVersion> updatedBookVersions = borrowRequest.getBorrowRequestItems().stream()
+                .map(item -> {
+                    item.setStatus(BRItemStatusConstant.BORROWED);
+                    BookVersion bookVersion = item.getBookVersion();
+                    bookVersion.setStatus(BookVersionConstants.BORROWED);
+                    return bookVersion;
+                })
+                .collect(Collectors.toList());
+
+        // Lưu tất cả các thay đổi
+        // Lưu các BookVersion đã cập nhật
+        bookVersionRepository.saveAll(updatedBookVersions);
+
+        // Lưu BorrowRequest và BorrowRequestItem.
+        // Do Hibernate tự động theo dõi các thay đổi, việc gọi saveAll()
+        // cho items có thể không cần thiết, nhưng an toàn để gọi.
+        borrowRequestRepository.save(borrowRequest);
+        borrowRequestItemRepository.saveAll(borrowRequest.getBorrowRequestItems());
+
+        return true;
     }
 }
