@@ -43,7 +43,7 @@ public class BRCleanupServiceImpl implements BRCleanupService {
     public void sendReminderMailForLongOverdue()
     {
         List<BorrowRequest> overdueBorrows = borrowRequestRepository.findByStatuses(
-                        Arrays.asList(BRStatusConstant.OVERDUE))
+                        Arrays.asList(BRStatusConstant.OVERDUE.getValue()))
                 .stream()
                 .toList();
 
@@ -65,13 +65,13 @@ public class BRCleanupServiceImpl implements BRCleanupService {
     public void checkOverdueBorrowRequests()
     {
         List<BorrowRequest> overdueBorrows = borrowRequestRepository.findByStatuses(
-                        Arrays.asList(BRStatusConstant.COMPLETED))
+                        Arrays.asList(BRStatusConstant.COMPLETED.getValue()))
                 .stream()
                 .filter(br -> Duration.between(br.getDayConfirmed(), LocalDateTime.now()).toDays() >= 7)
                 .toList();
         String message = messageSource.getMessage("user.overdueBorrowRequest.message", null, Locale.getDefault());
         overdueBorrows.forEach(br -> {
-            br.setStatus(BRStatusConstant.OVERDUE);
+            br.setStatus(BRStatusConstant.OVERDUE.getValue());
             handleSendMail(br,EmailType.OVERDUE_BORROW_REQUEST);
             br.setLastReminderSentAt(LocalDateTime.now()); // them field de luu lại thoi gian gui mail cuoi cung
         });
@@ -85,7 +85,7 @@ public class BRCleanupServiceImpl implements BRCleanupService {
 
         // Tim tat ca cac phieu muon co status la dang cho va dang duoc muon
         List<BorrowRequest> overdueBorrows = borrowRequestRepository.findByStatuses(
-                Arrays.asList(BRStatusConstant.PENDING))
+                Arrays.asList(BRStatusConstant.PENDING.getValue()))
                 .stream()
                 .filter(br ->  Duration.between(br.getCreatedAt(), LocalDateTime.now()).toDays() >= 3)
                 .toList();
@@ -93,7 +93,7 @@ public class BRCleanupServiceImpl implements BRCleanupService {
         String message = messageSource.getMessage("user.reservedOverdueBorrowRequest.message", null, Locale.getDefault());
         overdueBorrows.forEach(br ->{
             handleSendMail(br,EmailType.RESERVED_OVERDUE_BORROW_REQUEST);
-            br.setStatus((BRStatusConstant.CANCELLED));
+            br.setStatus((BRStatusConstant.CANCELED.getValue()));
 
             br.getBorrowRequestItems().forEach(brItem -> {
                 brItem.setStatus((BRItemStatusConstant.CANCELLED));

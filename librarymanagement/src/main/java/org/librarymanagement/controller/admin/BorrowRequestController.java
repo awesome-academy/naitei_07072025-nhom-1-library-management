@@ -1,6 +1,7 @@
 package org.librarymanagement.controller.admin;
 
 import org.librarymanagement.constant.ApiEndpoints;
+import org.librarymanagement.constant.BRStatusConstant;
 import org.librarymanagement.dto.response.BorrowRequestSummaryDto;
 import org.librarymanagement.service.BorrowService;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.HashMap;
 
 @Controller("adminBorrowRequestController")
 @RequestMapping(ApiEndpoints.ADMIN_BORROW_REQUEST)
@@ -35,6 +38,8 @@ public class BorrowRequestController {
                 : borrowRequests.getTotalPages());
         model.addAttribute("currentPage", page);
         model.addAttribute("status", status);
+        HashMap<Object, Object> BorrowRequestStatus;
+        model.addAttribute("statuses", BRStatusConstant.values());
         return "admin/borrow-requests/index";
     }
 

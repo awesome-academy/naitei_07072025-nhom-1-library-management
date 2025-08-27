@@ -4,10 +4,11 @@ import org.librarymanagement.constant.BRStatusConstant;
 
 import java.time.LocalDateTime;
 
-public record BorrowRequestSummaryDto(
+public record BorrowRequestRawDto (
         Integer id,
         String username,
         Integer totalBooks,
         LocalDateTime borrowDate,
-        BRStatusConstant status
-) {}
+        Integer status
+) {
+}

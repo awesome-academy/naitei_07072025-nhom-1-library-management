@@ -20,9 +20,11 @@
                   onsubmit="this.querySelectorAll('[name]').forEach(i => !i.value && i.removeAttribute('name'));">
                 <select name="status" class="form-select w-auto d-inline-block">
                     <option value="" th:selected="${status == null}">Tất cả</option>
-                    <option th:value="0" th:selected="${status == 0}">Đang chờ</option>
-                    <option th:value="1" th:selected="${status == 1}">Hoàn tất</option>
-                    <option th:value="2" th:selected="${status == 2}">Đã hủy</option>
+                    <option th:each="s : ${statuses}"
+                            th:value="${s.value}"
+                            th:text="${s.label}"
+                            th:selected="${status != null and status == s.value}">
+                    </option>
                 </select>
                 <button type="submit" class="btn btn-primary">Lọc</button>
             </form>
@@ -48,13 +50,9 @@
                                     th:text="${#temporals.format(item.borrowDate, 'dd/MM/yyyy HH:mm')}"></td>
                                 <td class="d-none d-xl-table-cell text-center">
                                     <span class="badge"
-                                          th:text="${item.status == 1 ? 'Hoàn tất'
-                                              : (item.status == 0 ? 'Đang chờ'
-                                              : 'Đã huỷ')}"
-                                          th:classappend="${item.status == 1 ? ' bg-success'
-                                              : (item.status == 0 ? ' bg-warning'
-                                              : ' bg-danger')}">
-                                    </span>
+                                          th:text="${item.status.label}"
+                                          th:classappend=" ${item.status.cssClass}">
+    </span>
                                 </td>
                                 <td class="d-none d-xl-table-cell text-center" style="padding: 8px;">
                                     <button type="button" class="btn btn-primary" th:text="#{table.button-view}"></button>

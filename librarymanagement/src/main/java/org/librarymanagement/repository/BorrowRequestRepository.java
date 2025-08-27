@@ -1,5 +1,6 @@
 package org.librarymanagement.repository;
 
+import org.librarymanagement.dto.response.BorrowRequestRawDto;
 import org.librarymanagement.dto.response.BorrowRequestSummaryDto;
 import org.librarymanagement.entity.BorrowRequest;
 import org.librarymanagement.entity.User;
@@ -19,7 +20,7 @@ public interface BorrowRequestRepository extends JpaRepository<BorrowRequest, In
     List<BorrowRequest> findBorrowRequestByUser(User user);
 
     @Query("""
-        SELECT new org.librarymanagement.dto.response.BorrowRequestSummaryDto(
+        SELECT new org.librarymanagement.dto.response.BorrowRequestRawDto(
             br.id,
             u.username,
             br.quantity,
@@ -30,7 +31,7 @@ public interface BorrowRequestRepository extends JpaRepository<BorrowRequest, In
         JOIN br.user u
         WHERE (:status IS NULL OR br.status = :status)
     """)
-    Page<BorrowRequestSummaryDto> findAllByStatus(
+    Page<BorrowRequestRawDto> findAllByStatus(
             @Param("status") Integer status,
             Pageable pageable
     );
