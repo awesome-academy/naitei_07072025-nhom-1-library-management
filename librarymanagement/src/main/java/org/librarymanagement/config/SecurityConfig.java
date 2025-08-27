@@ -81,6 +81,7 @@ public class SecurityConfig {
     public SecurityFilterChain adminSecurity(HttpSecurity http) throws Exception {
         http
                 .securityMatcher(ApiEndpoints.BASE_ADMIN_URI + "/**") // Áp dụng cho URL bắt đầu bằng /admin/
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(ApiEndpoints.ADMIN_AUTH + "/**", "/css/**", "/js/**").permitAll()
                         .requestMatchers(ApiEndpoints.BASE_ADMIN_URI + "/**").hasRole("ADMIN")

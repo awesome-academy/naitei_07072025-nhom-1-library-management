@@ -36,7 +36,7 @@
                             <thead>
                             <tr>
                                 <th class="d-none d-xl-table-cell text-center" th:text="#{table.name}"></th>
-                                <th class="d-none d-xl-table-cell text-center" th:text="#{table.bookname}"></th>
+                                <th class="d-none d-xl-table-cell text-center" th:text="#{table.count-book}"></th>
                                 <th class="d-none d-xl-table-cell text-center" th:text="#{table.borrowDate}"></th>
                                 <th class="d-none d-xl-table-cell text-center" th:text="#{table.status}"></th>
                                 <th></th>
@@ -56,7 +56,10 @@
                                 </td>
                                 <td class="d-none d-xl-table-cell text-center" style="padding: 8px;">
                                     <button type="button" class="btn btn-primary" th:text="#{table.button-view}"></button>
-                                    <button type="button" class="btn btn-warning" th:text="#{table.button-accept}"></button>
+                                    <form th:action="@{'/admin/borrow-requests/accept/' + ${item.id}}" method="post" style="display: inline;">
+                                        <input type="hidden" name="_method" value="patch" />
+                                        <button type="submit" class="btn btn-warning" th:text="#{table.button-accept}" th:if="${item.status().getValue() == 0}"></button>
+                                    </form>
                                     <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                                             data-bs-target="#confirmDeleteModal" th:text="#{table.button-delete}">
                                     </button>
@@ -68,14 +71,14 @@
                             <ul class="pagination justify-content-center mt-3">
                                 <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                                     <a class="page-link" aria-label="Previous"
-                                       th:href="@{/admin/borrow-requests(page=${currentPage-1}, status=${status})}">
+                                       th:href="@{/admin/borrow-requests(page=${currentPage - 1}, status=${status})}">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
 
                                 <li class="page-item"
                                     th:if="${totalPages > 0}"
-                                    th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+                                    th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                                     th:classappend="${i == currentPage} ? ' active'">
                                     <a class="page-link"
                                        th:text="${i + 1}"
@@ -95,6 +98,15 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div th:if="${message}"
+         class="alert alert-dismissible fade show position-fixed top-0 end-0 m-3"
+         th:classappend="'alert-' + ${alertType}" role="alert" style="z-index: 1050;">
+        <span th:text="${message}"></span>
+        <ul th:if="${errors}">
+            <li th:each="err : ${errors}" th:text="${err}"></li>
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 </div>
 </body>

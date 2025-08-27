@@ -11,4 +11,5 @@ import java.util.Map;
 public interface BorrowService {
     ResponseObject borrowBook(Map<Integer, Integer> bookBorrows, User user);
     Page<BorrowRequestSummaryDto> getAllRequests(Integer status, Pageable pageable);
+    boolean acceptBorrowRequest(Integer requestId);
 }

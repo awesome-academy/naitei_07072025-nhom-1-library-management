@@ -6,11 +6,12 @@ import org.librarymanagement.dto.response.BorrowRequestSummaryDto;
 import org.librarymanagement.service.BorrowService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 
@@ -46,5 +47,19 @@ public class BorrowRequestController {
     @GetMapping("/{id}")
     public String showRequestBookedit() {
         return "admin/borrow-requests/detail";
+    }
+
+    @PatchMapping("/accept/{id}")
+    public String acceptBorrowRequest(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        boolean success = borrowService.acceptBorrowRequest(id);
+        if (success) {
+            redirectAttributes.addFlashAttribute("message", "Phiếu mượn đã được xác nhận!");
+            redirectAttributes.addFlashAttribute("alertType", "success");
+        } else {
+            redirectAttributes.addFlashAttribute("message", "Không tìm thấy phiếu mượn");
+            redirectAttributes.addFlashAttribute("alertType", "danger");
+        }
+        // Chuyển hướng về trang danh sách phiếu mượn
+        return "redirect:" + ApiEndpoints.ADMIN_BORROW_REQUEST;
     }
 }
