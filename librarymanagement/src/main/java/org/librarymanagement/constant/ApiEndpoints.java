@@ -8,6 +8,8 @@ public class ApiEndpoints {
     public static final String USER_PROFILE = BASE_USER_URI + "/me";
     public static final String USER_BOOK = BASE_USER_URI + "/books";
     public static final String USER_BORROW_REQUEST = BASE_USER_URI + "/borrow-requests";
+    public static final String USER_PUBLISHER = BASE_USER_URI + "/publishers";
+
     // Admin
     public static final String BASE_ADMIN_URI = "/admin";
 

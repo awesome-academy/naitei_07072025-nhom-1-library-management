@@ -46,7 +46,7 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
 
         List<BorrowRequest> pendingBorrowRequests = new ArrayList<>();
 
-        pendingBorrowRequests = borrowRequests.stream().filter(b -> b.getStatus().equals(BRStatusConstant.PENDING)).toList();
+        pendingBorrowRequests = borrowRequests.stream().filter(b -> b.getStatus().equals(BRStatusConstant.PENDING.getValue())).toList();
 
         if(pendingBorrowRequests.isEmpty()) {
             return new ResponseObject(
@@ -137,7 +137,7 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
                 book.getTitle(),
                 publisherName,
                 convertBRItemStatusToString(item.getStatus()),
-                convertBorrowRequestStatusToString(item.getBorrowRequest().getStatus()),
+                fromValue(item.getBorrowRequest().getStatus()).getLabel(),
                 reviewLink,
                 cancelReason
         );
