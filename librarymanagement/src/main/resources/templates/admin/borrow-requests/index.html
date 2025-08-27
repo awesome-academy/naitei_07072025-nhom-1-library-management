@@ -36,7 +36,7 @@
                             <thead>
                             <tr>
                                 <th class="d-none d-xl-table-cell text-center" th:text="#{table.name}"></th>
-                                <th class="d-none d-xl-table-cell text-center" th:text="#{table.bookname}"></th>
+                                <th class="d-none d-xl-table-cell text-center" th:text="#{table.count-book}"></th>
                                 <th class="d-none d-xl-table-cell text-center" th:text="#{table.borrowDate}"></th>
                                 <th class="d-none d-xl-table-cell text-center" th:text="#{table.status}"></th>
                                 <th></th>
@@ -52,7 +52,7 @@
                                     <span class="badge"
                                           th:text="${item.status.label}"
                                           th:classappend=" ${item.status.cssClass}">
-    </span>
+                                    </span>
                                 </td>
                                 <td class="d-none d-xl-table-cell text-center" style="padding: 8px;">
                                     <button type="button" class="btn btn-primary" th:text="#{table.button-view}"></button>
