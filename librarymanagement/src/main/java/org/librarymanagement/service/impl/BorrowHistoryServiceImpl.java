@@ -1,6 +1,7 @@
 package org.librarymanagement.service.impl;
 
 import org.librarymanagement.constant.BRItemStatusConstant;
+import org.librarymanagement.constant.BRStatusConstant;
 import org.librarymanagement.constant.BorrowRuleConstant;
 import org.librarymanagement.dto.response.BorrowHistoryDto;
 import org.librarymanagement.entity.BorrowRequestItem;
@@ -33,7 +34,18 @@ public class BorrowHistoryServiceImpl implements BorrowHistoryService {
     public List<BorrowHistoryDto> getBorrowHistoryForCurrentUser(Locale locale){
         User currentUser = currentUserService.getCurrentUser();
 
-        List<BorrowRequestItem> historyItems = borrowRequestItemRepository.findBorrowBookByUserId(currentUser.getId());
+        int completedStatus = BRStatusConstant.COMPLETED.getValue();
+        List<Integer> itemStatuses = List.of(
+                BRItemStatusConstant.BORROWED,
+                BRItemStatusConstant.OVERDUE,
+                BRItemStatusConstant.LOST
+        );
+
+        List<BorrowRequestItem> historyItems = borrowRequestItemRepository.findBorrowHistoryByUserId(
+                currentUser.getId(),
+                completedStatus,
+                itemStatuses
+        );
 
         return historyItems.stream()
                 .map(item -> convertToDto(item, locale))

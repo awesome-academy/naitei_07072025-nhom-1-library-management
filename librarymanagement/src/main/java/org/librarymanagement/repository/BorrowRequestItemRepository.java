@@ -30,11 +30,13 @@ public interface BorrowRequestItemRepository extends JpaRepository<BorrowRequest
             JOIN FETCH bv.book b
             JOIN bri.borrowRequest br
             WHERE bri.borrowRequest.user.id = :userId
-            AND br.status = org.librarymanagement.constant.BRStatusConstant.COMPLETED
-            AND bri.status IN (org.librarymanagement.constant.BRItemStatusConstant.BORROWED, 
-                               org.librarymanagement.constant.BRItemStatusConstant.OVERDUE, 
-                               org.librarymanagement.constant.BRItemStatusConstant.LOST)
+            AND br.status = :requestStatusCompleted
+            AND bri.status IN :itemStatusList
             ORDER BY bri.createdAt DESC
             """)
-    List<BorrowRequestItem> findBorrowBookByUserId(@Param("userId")Integer userId);
+    List<BorrowRequestItem> findBorrowHistoryByUserId(
+            @Param("userId") Integer userId,
+            @Param("requestStatusCompleted") int requestStatusCompleted,
+            @Param("itemStatusList") List<Integer> itemStatusList
+    );
 }
