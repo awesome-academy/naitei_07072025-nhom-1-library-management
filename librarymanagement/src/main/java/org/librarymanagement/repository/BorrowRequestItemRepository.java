@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 @Repository
@@ -24,4 +23,18 @@ public interface BorrowRequestItemRepository extends JpaRepository<BorrowRequest
     @Query("SELECT bri FROM BorrowRequestItem bri WHERE bri.status IN (:statuses)")
     List<BorrowRequestItem> findByStatuses(@Param("statuses") List<Integer> statuses);
     List<BorrowRequestItem> findBorrowRequestItemByBorrowRequest(BorrowRequest borrowRequest);
+
+    @Query("""
+            SELECT bri FROM BorrowRequestItem bri
+            JOIN FETCH bri.bookVersion bv
+            JOIN FETCH bv.book b
+            JOIN bri.borrowRequest br
+            WHERE bri.borrowRequest.user.id = :userId
+            AND br.status = org.librarymanagement.constant.BRStatusConstant.COMPLETED
+            AND bri.status IN (org.librarymanagement.constant.BRItemStatusConstant.BORROWED, 
+                               org.librarymanagement.constant.BRItemStatusConstant.OVERDUE, 
+                               org.librarymanagement.constant.BRItemStatusConstant.LOST)
+            ORDER BY bri.createdAt DESC
+            """)
+    List<BorrowRequestItem> findBorrowBookByUserId(@Param("userId")Integer userId);
 }
