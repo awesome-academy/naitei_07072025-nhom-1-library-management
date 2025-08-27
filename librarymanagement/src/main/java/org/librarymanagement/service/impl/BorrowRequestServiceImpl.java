@@ -7,20 +7,15 @@ import org.librarymanagement.constant.BookVersionConstants;
 import org.librarymanagement.dto.response.*;
 import org.librarymanagement.entity.*;
 import org.librarymanagement.exception.NotFoundException;
-import org.librarymanagement.repository.BookRepository;
 import org.librarymanagement.repository.BorrowRequestItemRepository;
 import org.librarymanagement.repository.BorrowRequestRepository;
-import org.librarymanagement.repository.UserRepository;
 import org.librarymanagement.service.BorrowRequestService;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly=true)
@@ -83,6 +78,66 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
         );
     }
 
+    @Override
+    public ResponseObject getReturnedBorrowRequests(User user) {
+        List<BorrowRequest> borrowRequests = borrowRequestRepository.findBorrowRequestByUser(user);
+
+        List<BorrowFlatResponse> returnedResponses = new ArrayList<>();
+
+        for (BorrowRequest request : borrowRequests) {
+            List<BorrowRequestItem> items = borrowRequestItemRepository.findBorrowRequestItemByBorrowRequest(request).stream()
+                    .filter(b -> b.getStatus().equals(BRItemStatusConstant.RETURNED))
+                    .toList();
+
+            items.forEach(item -> {
+                String reviewLink = createReviewLink(item.getBookVersion().getBook().getSlug()).href();
+                returnedResponses.add(convertToFlatResponse(item, null, reviewLink));
+            });
+        }
+
+        if(returnedResponses.isEmpty()) {
+            return new ResponseObject(
+                    messageSource.getMessage(
+                            "user.borrowBooks.noReturnedBook",
+                            null,
+                            LocaleContextHolder.getLocale()
+                    ),
+                    200,
+                    null
+            );
+        }
+
+        String successMessage = messageSource.getMessage(
+                "user.borrowBooks.returnedBook",
+                null,
+                LocaleContextHolder.getLocale()
+        );
+
+        return new ResponseObject(
+                successMessage,
+                200,
+                returnedResponses
+        );
+    }
+
+    private BorrowFlatResponse convertToFlatResponse(BorrowRequestItem item, String cancelReason, String reviewLink) {
+        BookVersion bookVersion = item.getBookVersion();
+        Book book = bookVersion.getBook();
+        Publisher publisher = book.getPublisher();
+        String publisherName = (publisher != null) ? publisher.getName() : "N/A";
+
+        return new BorrowFlatResponse(
+                item.getBorrowRequest().getId(),
+                item.getId(),
+                book.getTitle(),
+                publisherName,
+                convertBRItemStatusToString(item.getStatus()),
+                convertBorrowRequestStatusToString(item.getBorrowRequest().getStatus()),
+                reviewLink,
+                cancelReason
+        );
+    }
+
     private List<BorrowRequestItemResponse> convertBRItemToResponse(List<BorrowRequestItem> borrowRequestItems) {
 
         if (borrowRequestItems == null) {
@@ -119,6 +174,18 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
                 .toList();
 
         return borrowRequestItemResponses;
+    }
+
+    private LinkResponse createReviewLink(String slug){
+        String link = new String("http://localhost:8080/api/books/");
+
+        link = link + slug + "/reviews";
+
+        return new LinkResponse(
+                link,
+                "reviews",
+                "Hãy đánh giá sách này"
+        );
     }
 
     private String convertBRItemStatusToString(int status){
