@@ -2,6 +2,7 @@ package org.librarymanagement.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.librarymanagement.dto.response.NotEnoughBookErrorResponse;
+import org.librarymanagement.dto.response.NotEnoughConditionsBorrow;
 import org.librarymanagement.dto.response.ValidationErrorResponse;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -56,6 +57,17 @@ public class ValidationExceptionHandler {
     public NotEnoughBookErrorResponse handleNotEnoughBookException(NotEnoughBookException ex)
     {
         return NotEnoughBookErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(ex.getMessage())
+                .fieldErrors(ex.getFieldErrors())
+                .build();
+    }
+
+    @ExceptionHandler(NotEnoughConditionsBorrowException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public NotEnoughConditionsBorrow handleNotEnoughBookException(NotEnoughConditionsBorrowException ex)
+    {
+        return NotEnoughConditionsBorrow.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(ex.getMessage())
                 .fieldErrors(ex.getFieldErrors())

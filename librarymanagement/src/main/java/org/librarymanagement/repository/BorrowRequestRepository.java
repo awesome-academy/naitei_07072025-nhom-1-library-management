@@ -39,4 +39,8 @@ public interface BorrowRequestRepository extends JpaRepository<BorrowRequest, In
     @Query("SELECT bri FROM BorrowRequest bri WHERE bri.status IN (:statuses)")
     @EntityGraph(attributePaths = {"user", "borrowRequestItems"})
     List<BorrowRequest> findByStatuses(@Param("statuses") List<Integer> statuses);
+
+    @Query("SELECT bri FROM BorrowRequest bri WHERE bri.user.id = :id AND bri.status IN (:statuses)")
+    @EntityGraph(attributePaths = {"user", "borrowRequestItems"})
+    List<BorrowRequest> findByStatusAndUser(@Param("statuses") List<Integer> statuses, @Param("id") Integer id);
 }
