@@ -188,6 +188,35 @@
     <script th:src="@{/public/cdn/js/jsvectormap.js}"></script>
     <script th:src="@{/public/cdn/js/jsvectormap-world.js}"></script>
     <script th:src="@{/public/js/admin/dashboard.js}"></script>
+    <script th:src="@{/public/js/layouts/app.js}"></script>
+    <!-- Để ở file js riêng thì em ko load được data từ controller nên phải để đây ạ -->
+    <script th:inline="javascript">
+        const labels = [[${userChartLabels}]];
+        const data = [[${userChartData}]];
+
+        new Chart(document.getElementById("chartjs-dashboard-bar"), {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Số lượng user mới",
+                    backgroundColor: window.theme.primary,
+                    borderColor: window.theme.primary,
+                    data: data,
+                    barPercentage: 0.75,
+                    categoryPercentage: 0.5
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                    x: { grid: { display: false } }
+                },
+                plugins: { legend: { display: true } }
+            }
+        });
+    </script>
 </div>
 </body>
 </html>
