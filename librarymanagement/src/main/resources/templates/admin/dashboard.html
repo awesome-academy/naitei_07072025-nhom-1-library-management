@@ -107,60 +107,24 @@
                         <table class="table table-hover my-0">
                             <thead>
                             <tr>
-                                <th th:text="#{table.name}"></th>
-                                <th th:text="#{table.bookname}"></th>
-                                <th th:text="#{table.borrowDate}"></th>
-                                <th th:text="#{table.status}"></th>
+                                <th class="d-none d-xl-table-cell text-center" th:text="#{table.name}"></th>
+                                <th class="d-none d-xl-table-cell text-center" th:text="#{table.count-book}"></th>
+                                <th class="d-none d-xl-table-cell text-center" th:text="#{table.borrowDate}"></th>
+                                <th class="d-none d-xl-table-cell text-center" th:text="#{table.status}"></th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>Project Apollo</td>
-                                <td class="d-none d-xl-table-cell">Project Apollo</td>
-                                <td class="d-none d-xl-table-cell">31/06/2023</td>
-                                <td><span class="badge bg-success" th:text="#{status.returned}"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Project Fireball</td>
-                                <td class="d-none d-xl-table-cell">Project Fireball</td>
-                                <td class="d-none d-xl-table-cell">31/06/2023</td>
-                                <td><span class="badge bg-danger" th:text="#{status.cancelled}"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Project Hades</td>
-                                <td class="d-none d-xl-table-cell">Project Fireball</td>
-                                <td class="d-none d-xl-table-cell">31/06/2023</td>
-                                <td><span class="badge bg-success" th:text="#{status.returned}"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Project Nitro</td>
-                                <td class="d-none d-xl-table-cell">Project Fireball</td>
-                                <td class="d-none d-xl-table-cell">31/06/2023</td>
-                                <td><span class="badge bg-warning" th:text="#{status.borrowing}"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Project Phoenix</td>
-                                <td class="d-none d-xl-table-cell">Project Fireball</td>
-                                <td class="d-none d-xl-table-cell">31/06/2023</td>
-                                <td><span class="badge bg-success" th:text="#{status.returned}"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Project X</td>
-                                <td class="d-none d-xl-table-cell">Project Fireball</td>
-                                <td class="d-none d-xl-table-cell">31/06/2023</td>
-                                <td><span class="badge bg-success" th:text="#{status.returned}"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Project Romeo</td>
-                                <td class="d-none d-xl-table-cell">Project Fireball</td>
-                                <td class="d-none d-xl-table-cell">31/06/2023</td>
-                                <td><span class="badge bg-success" th:text="#{status.returned}"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Project Wombat</td>
-                                <td class="d-none d-xl-table-cell">Project Fireball</td>
-                                <td class="d-none d-xl-table-cell">31/06/2023</td>
-                                <td><span class="badge bg-warning" th:text="#{status.borrowing}"></span></td>
+                            <tr th:each="item : ${borrowRequests}">
+                                <td class="d-none d-xl-table-cell text-center" th:text="${item.username}"></td>
+                                <td class="d-none d-xl-table-cell text-center" th:text="${item.totalBooks}"></td>
+                                <td class="d-none d-xl-table-cell text-center"
+                                    th:text="${#temporals.format(item.borrowDate, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td class="d-none d-xl-table-cell text-center">
+                                    <span class="badge"
+                                          th:text="${item.status.label}"
+                                          th:classappend=" ${item.status.cssClass}">
+                                    </span>
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -188,6 +152,25 @@
     <script th:src="@{/public/cdn/js/jsvectormap.js}"></script>
     <script th:src="@{/public/cdn/js/jsvectormap-world.js}"></script>
     <script th:src="@{/public/js/admin/dashboard.js}"></script>
+    <script th:src="@{/public/js/layouts/app.js}"></script>
+    <script th:inline="javascript">
+        const labels = [[${labels}]];
+        const data = [[${data}]];
+
+        new Chart(document.getElementById("chartjs-dashboard-line"), {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Lượt mượn",
+                    data: data,
+                    fill: true,
+                    borderColor: window.theme.primary,
+                    backgroundColor: "rgba(215,227,244,0.5)"
+                }]
+            }
+        });
+    </script>
 </div>
 </body>
 </html>

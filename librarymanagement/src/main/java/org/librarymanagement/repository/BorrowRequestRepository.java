@@ -30,6 +30,7 @@ public interface BorrowRequestRepository extends JpaRepository<BorrowRequest, In
         FROM BorrowRequest br
         JOIN br.user u
         WHERE (:status IS NULL OR br.status = :status)
+        ORDER BY br.createdAt DESC
     """)
     Page<BorrowRequestRawDto> findAllByStatus(
             @Param("status") Integer status,
@@ -39,4 +40,11 @@ public interface BorrowRequestRepository extends JpaRepository<BorrowRequest, In
     @Query("SELECT bri FROM BorrowRequest bri WHERE bri.status IN (:statuses)")
     @EntityGraph(attributePaths = {"user", "borrowRequestItems"})
     List<BorrowRequest> findByStatuses(@Param("statuses") List<Integer> statuses);
+
+    @Query("SELECT FUNCTION('YEAR', b.dayConfirmed) AS yr, FUNCTION('MONTH', b.dayConfirmed) AS mn, COUNT(b) " +
+            "FROM BorrowRequest b " +
+            "WHERE b.dayConfirmed BETWEEN :start AND :end AND b.status = 1 " +
+            "GROUP BY FUNCTION('YEAR', b.dayConfirmed), FUNCTION('MONTH', b.dayConfirmed) " +
+            "ORDER BY yr, mn")
+    List<Object[]> countBorrowRequestsLast12Months(LocalDateTime start, LocalDateTime end);
 }
