@@ -12,6 +12,9 @@ import org.librarymanagement.repository.BorrowRequestRepository;
 import org.librarymanagement.service.BorrowRequestService;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,7 +82,7 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
     }
 
     @Override
-    public ResponseObject getReturnedBorrowRequests(User user) {
+    public Page<BorrowFlatResponse> getReturnedBorrowRequests(User user, Pageable pageable) {
         List<BorrowRequest> borrowRequests = borrowRequestRepository.findBorrowRequestByUser(user);
 
         List<BorrowFlatResponse> returnedResponses = new ArrayList<>();
@@ -95,29 +98,23 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
             });
         }
 
-        if(returnedResponses.isEmpty()) {
-            return new ResponseObject(
-                    messageSource.getMessage(
-                            "user.borrowBooks.noReturnedBook",
-                            null,
-                            LocaleContextHolder.getLocale()
-                    ),
-                    200,
-                    null
-            );
+        if (returnedResponses.isEmpty()) {
+            return Page.empty(pageable);
         }
 
-        String successMessage = messageSource.getMessage(
-                "user.borrowBooks.returnedBook",
-                null,
-                LocaleContextHolder.getLocale()
-        );
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        List<BorrowFlatResponse> pageList;
 
-        return new ResponseObject(
-                successMessage,
-                200,
-                returnedResponses
-        );
+        if (returnedResponses.size() < startItem) {
+            pageList = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, returnedResponses.size());
+            pageList = returnedResponses.subList(startItem, toIndex);
+        }
+
+        return new PageImpl<>(pageList, pageable, returnedResponses.size());
     }
 
     private BorrowFlatResponse convertToFlatResponse(BorrowRequestItem item, String cancelReason, String reviewLink) {
