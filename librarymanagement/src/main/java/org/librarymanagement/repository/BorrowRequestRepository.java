@@ -1,5 +1,6 @@
 package org.librarymanagement.repository;
 
+import lombok.NonNull;
 import org.librarymanagement.dto.response.BorrowRequestRawDto;
 import org.librarymanagement.dto.response.BorrowRequestSummaryDto;
 import org.librarymanagement.entity.BorrowRequest;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BorrowRequestRepository extends JpaRepository<BorrowRequest, Integer> {
@@ -39,4 +41,20 @@ public interface BorrowRequestRepository extends JpaRepository<BorrowRequest, In
     @Query("SELECT bri FROM BorrowRequest bri WHERE bri.status IN (:statuses)")
     @EntityGraph(attributePaths = {"user", "borrowRequestItems"})
     List<BorrowRequest> findByStatuses(@Param("statuses") List<Integer> statuses);
+
+    @Query("""
+        SELECT DISTINCT br FROM BorrowRequest br
+        JOIN FETCH br.borrowRequestItems bri
+        JOIN FETCH bri.bookVersion bv
+        JOIN FETCH bv.book b
+        LEFT JOIN FETCH b.bookAuthors ba
+        LEFT JOIN FETCH ba.author a
+        WHERE br.id = :id
+    """)
+    Optional<BorrowRequest> findByIdWithDetails(@Param("id") Integer id);
+
+    @Override
+    @NonNull
+    @EntityGraph(attributePaths = {"user", "borrowRequestItems"})
+    Optional<BorrowRequest> findById(@NonNull Integer id);
 }

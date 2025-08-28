@@ -52,13 +52,25 @@
                                     <span class="badge"
                                           th:text="${item.status.label}"
                                           th:classappend=" ${item.status.cssClass}">
-    </span>
+                                    </span>
                                 </td>
                                 <td class="d-none d-xl-table-cell text-center" style="padding: 8px;">
-                                    <button type="button" class="btn btn-primary" th:text="#{table.button-view}"></button>
-                                    <button type="button" class="btn btn-warning" th:text="#{table.button-accept}"></button>
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                            data-bs-target="#confirmDeleteModal" th:text="#{table.button-delete}">
+                                    <!-- Xem chi tiết -->
+                                    <a th:href="@{'/admin/borrow-requests/' + ${item.id}}"
+                                       class="btn btn-primary"
+                                       th:text="#{table.button-view}">
+                                    </a>
+
+                                    <!-- Chấp nhận -->
+                                    <form th:action="@{'/admin/borrow-requests/accept/' + ${item.id}}" method="post" style="display: inline;">
+                                        <input type="hidden" name="_method" value="patch" />
+                                        <button type="submit" class="btn btn-warning" th:text="#{table.button-accept}" th:if="${item.status().getValue() == 0}"></button>
+                                    </form>
+
+                                    <!-- Xóa (mở modal) -->
+                                    <button type="button" class="btn btn-danger"
+                                            data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"
+                                            th:text="#{table.button-delete}">
                                     </button>
                                 </td>
                             </tr>
@@ -68,14 +80,14 @@
                             <ul class="pagination justify-content-center mt-3">
                                 <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                                     <a class="page-link" aria-label="Previous"
-                                       th:href="@{/admin/borrow-requests(page=${currentPage-1}, status=${status})}">
+                                       th:href="@{/admin/borrow-requests(page=${currentPage - 1}, status=${status})}">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
 
                                 <li class="page-item"
                                     th:if="${totalPages > 0}"
-                                    th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+                                    th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                                     th:classappend="${i == currentPage} ? ' active'">
                                     <a class="page-link"
                                        th:text="${i + 1}"
@@ -96,6 +108,7 @@
             </div>
         </div>
     </div>
+    <div th:replace="~{fragments/table :: deleteTable}"></div>
 </div>
 </body>
 </html>

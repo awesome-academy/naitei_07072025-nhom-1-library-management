@@ -25,9 +25,9 @@
                             <div class="d-flex align-items-center">
                                 <img src="/public/images/default-avatar.png" alt="Avatar" class="img-detail rounded-circle me-3">
                                 <div>
-                                    <p class="mb-1"><strong th:text="#{book.title} + ':'"></strong> <span>Nguyễn Vũ Nguyên</span></p>
-                                    <p class="mb-1"><strong th:text="#{borrower.email} + ':'"></strong> <span></span>nguyenvunguyen@gmail.com</p>
-                                    <p class="mb-1"><strong th:text="#{borrower.phone} + ':'"></strong> <span></span>0999999999</p>
+                                    <p class="mb-1"><strong th:text="#{borrower.name} + ':'"></strong> <span th:text="${detail.borrowerName}"></span></p>
+                                    <p class="mb-1"><strong th:text="#{borrower.email} + ':'"></strong> <span th:text="${detail.borrowerEmail}"></span></p>
+                                    <p class="mb-1"><strong th:text="#{borrower.phone} + ':'"></strong> <span th:text="${detail.borrowerPhone}"></span></p>
                                     <p class="mb-1">
                                         <strong th:text="#{borrower.status} + ':'"></strong>
                                         <span class="badge bg-success">Hoạt động</span>
@@ -45,20 +45,33 @@
                                 <table class="table table-bordered align-middle">
                                     <thead class="table-dark">
                                     <tr>
-                                        <th class="d-none d-xl-table-cell text-center" th:text="#{book.title}">Tên sách</th>
-                                        <th class="d-none d-xl-table-cell text-center" th:text="#{book.author}">Tác giả</th>
-                                        <th class="d-none d-xl-table-cell text-center" th:text="#{book.publisher}">Nhà xuất bản</th>
-                                        <th class="d-none d-xl-table-cell text-center" th:text="#{book.publishDate}">Ngày xuất bản</th>
-                                        <th class="d-none d-xl-table-cell text-center" th:text="#{book.availableQuantity}">Số lượng có thể mượn</th>
+                                        <th class="d-none d-xl-table-cell text-center" th:text="#{book.title}"></th>
+                                        <th class="d-none d-xl-table-cell text-center" th:text="#{book.author}"></th>
+                                        <th class="d-none d-xl-table-cell text-center" th:text="#{book.publisher}"></th>
+                                        <th class="d-none d-xl-table-cell text-center" th:text="#{book.publishDate}"></th>
+                                        <th class="d-none d-xl-table-cell text-center" th:text="#{book.availableQuantity}"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-                                        <td class="d-none d-xl-table-cell text-center">Lập trình Pyhton</td>
-                                        <td class="d-none d-xl-table-cell text-center">Lý Tuấn Văn</td>
-                                        <td class="d-none d-xl-table-cell text-center">Nhà xuất bản Kim Đồng</td>
-                                        <td class="d-none d-xl-table-cell text-center">01/9/2023</td>
-                                        <td class="d-none d-xl-table-cell text-center">20</td>
+                                    <tr th:each="item : ${detail.items}">
+                                        <td class="d-none d-xl-table-cell text-center" th:text="${item.bookTitle}"></td>
+                                        <td class="d-none d-xl-table-cell text-center" th:text="${item.bookAuthor}"></td>
+                                        <td class="d-none d-xl-table-cell text-center" th:text="${item.publisher}"></td>
+                                        <td class="d-none d-xl-table-cell text-center" th:text="${#temporals.format(item.publishDate, 'dd/MM/yyyy')}"></td>
+                                        <td class="d-none d-xl-table-cell text-center" th:text="${item.availableQuantity}"></td>
+                                        <td class="d-none d-xl-table-cell text-center">
+                                            <div th:if="${item.status == T(org.librarymanagement.constant.BRItemStatusConstant).BORROWED}">
+                                                <form th:action="@{/admin/borrow-requests-items/return}" method="post">
+                                                    <input type="hidden" name="_method" value="patch" />
+                                                    <input type="hidden" name="itemId" th:value="${item.id}" />
+                                                    <button type="submit" class="btn btn-primary">Trả sách</button>
+                                                </form>
+                                            </div>
+
+                                            <div th:unless="${item.status == T(org.librarymanagement.constant.BRItemStatusConstant).BORROWED}">
+                                                <i class="fas fa-check-circle" style="color: green; font-size: 24px;"></i>
+                                            </div>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -70,15 +83,23 @@
                         <!-- Thông tin thời gian -->
                         <div class="mb-4">
                             <h4 class="mb-3" th:text="#{borrow.time}"></h4>
-                            <p class="mb-1"><strong th:text="#{borrow.start} + ':'"></strong> <span>18/8/2025</span></p>
-                            <p class="mb-1"><strong th:text="#{borrow.end} + ':'"></strong> <span>01/9/2025</span></p>
+                            <p class="mb-1">
+                                <strong th:text="#{borrow.start} + ':'"></strong>
+                                <span th:text="${#temporals.format(detail.startDate, 'dd/MM/yyyy')}"></span>
+                            </p>
+                            <p class="mb-1">
+                                <strong th:text="#{borrow.end} + ':'"></strong>
+                                <span th:text="${#temporals.format(detail.endDate, 'dd/MM/yyyy')}"></span>
+                            </p>
                         </div>
 
                         <hr/>
 
                         <!-- Nút hành động -->
-                        <div class="d-flex justify-content-center gap-3">
-                            <form method="post">
+                        <div class="d-flex justify-content-center gap-3"
+                             th:if="${detail.status == T(org.librarymanagement.constant.BRStatusConstant).PENDING}">
+                            <form th:action="@{'/admin/borrow-requests/accept/' + ${id}}" method="post">
+                                <input type="hidden" name="_method" value="patch" />
                                 <button type="submit" class="btn btn-primary px-4" th:text="#{button.approve}"></button>
                             </form>
 
@@ -107,6 +128,7 @@
             </div>
         </div>
     </div>
+    <script th:src="@{/public/js/admin/borrowRequest.js}"></script>
 </div>
 </body>
 </html>

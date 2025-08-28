@@ -137,7 +137,7 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
                 book.getTitle(),
                 publisherName,
                 convertBRItemStatusToString(item.getStatus()),
-                convertBorrowRequestStatusToString(item.getBorrowRequest().getStatus()),
+                fromValue(item.getBorrowRequest().getStatus()).getLabel(),
                 reviewLink,
                 cancelReason
         );

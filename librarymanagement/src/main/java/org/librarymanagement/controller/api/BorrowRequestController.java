@@ -1,17 +1,13 @@
 package org.librarymanagement.controller.api;
 
 import org.librarymanagement.constant.ApiEndpoints;
-import org.librarymanagement.dto.response.BookDetailResponse;
 import org.librarymanagement.dto.response.ResponseObject;
 import org.librarymanagement.entity.User;
-import org.librarymanagement.service.BookService;
 import org.librarymanagement.service.BorrowRequestService;
 import org.librarymanagement.service.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
