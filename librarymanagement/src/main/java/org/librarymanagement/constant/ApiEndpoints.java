@@ -19,4 +19,5 @@ public class ApiEndpoints {
     public static final String ADMIN_AUTHOR = BASE_ADMIN_URI + "/authors";
     public static final String ADMIN_PUBLISHER = BASE_ADMIN_URI + "/publishers";
     public static final String ADMIN_GENRES = BASE_ADMIN_URI + "/genres";
+    public static final String ADMIN_BORROW_REQUEST_ITEM = BASE_ADMIN_URI + "/borrow-requests-items";
 }
