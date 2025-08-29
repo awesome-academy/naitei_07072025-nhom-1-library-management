@@ -44,6 +44,7 @@ public class Book {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(unique = true, nullable = false)
     private String slug;
 
     @Builder.Default
