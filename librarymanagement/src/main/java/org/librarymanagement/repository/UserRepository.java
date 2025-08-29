@@ -28,4 +28,6 @@ public interface UserRepository extends CrudRepository<User,Integer> {
         ORDER BY YEAR(u.created_at), MONTH(u.created_at)
         """, nativeQuery = true)
     List<Object[]> countNewUsersLast12Months();
+    long countByCreatedAtAfter(LocalDateTime dateTime);
+    long countByCreatedAtBetween(LocalDateTime start, LocalDateTime end);// số member mới
 }

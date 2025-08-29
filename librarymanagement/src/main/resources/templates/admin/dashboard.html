@@ -26,9 +26,11 @@
                                                 <h5 class="card-title" th:text="#{card.borrowRequest}"></h5>
                                             </div>
                                         </div>
-                                        <h1 class="mt-1 mb-3">2.382</h1>
+                                        <h2 class="mt-1 mb-3" th:text="${dashboard.borrowRequests.current}"></h2>
                                         <div class="mb-0">
-                                            <span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> -3.65% </span>
+                                            <span th:classappend="${dashboard.borrowRequests.change < 0} ? 'text-danger' : 'text-success'">
+                                                <span th:text="${#numbers.formatDecimal(dashboard.borrowRequests.change, 1, 2)} + '%'"></span>
+                                            </span>
                                             <span class="text-muted" th:text="#{compare.lastWeek}"></span>
                                         </div>
                                     </div>
@@ -40,9 +42,11 @@
                                                 <h5 class="card-title" th:text="#{card.realBorrow}"></h5>
                                             </div>
                                         </div>
-                                        <h1 class="mt-1 mb-3">14.212</h1>
+                                        <h2 class="mt-1 mb-3" th:text="${dashboard.realBorrows.current}"></h2>
                                         <div class="mb-0">
-                                            <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> 5.25% </span>
+                                            <span th:classappend="${dashboard.realBorrows.change < 0} ? 'text-danger' : 'text-success'">
+                                                <span th:text="${#numbers.formatDecimal(dashboard.realBorrows.change, 1, 2)} + '%'"></span>
+                                            </span>
                                             <span class="text-muted" th:text="#{compare.lastWeek}"></span>
                                         </div>
                                     </div>
@@ -56,9 +60,11 @@
                                                 <h5 class="card-title" th:text="#{card.newBooks}"></h5>
                                             </div>
                                         </div>
-                                        <h1 class="mt-1 mb-3">$21.300</h1>
+                                        <h2 class="mt-1 mb-3" th:text="${dashboard.newBooks.current}"></h2>
                                         <div class="mb-0">
-                                            <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> 6.65% </span>
+                                            <span th:classappend="${dashboard.newBooks.change < 0} ? 'text-danger' : 'text-success'">
+                                                <span th:text="${#numbers.formatDecimal(dashboard.newBooks.change, 1, 2)} + '%'"></span>
+                                            </span>
                                             <span class="text-muted" th:text="#{compare.lastWeek}"></span>
                                         </div>
                                     </div>
@@ -70,9 +76,11 @@
                                                 <h5 class="card-title" th:text="#{card.newMembers}"></h5>
                                             </div>
                                         </div>
-                                        <h1 class="mt-1 mb-3">64</h1>
+                                        <h2 class="mt-1 mb-3" th:text="${dashboard.newMembers.current}"></h2>
                                         <div class="mb-0">
-                                            <span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> -2.25% </span>
+                                            <span th:classappend="${dashboard.newMembers.change < 0} ? 'text-danger' : 'text-success'">
+                                                <span th:text="${#numbers.formatDecimal(dashboard.newMembers.change, 1, 2)} + '%'"></span>
+                                            </span>
                                             <span class="text-muted" th:text="#{compare.lastWeek}"></span>
                                         </div>
                                     </div>
