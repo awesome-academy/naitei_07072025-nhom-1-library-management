@@ -1,5 +1,6 @@
 package org.librarymanagement.repository;
 
+import org.librarymanagement.constant.BRStatusConstant;
 import org.librarymanagement.dto.response.BorrowRequestRawDto;
 import org.librarymanagement.dto.response.BorrowRequestSummaryDto;
 import org.librarymanagement.entity.BorrowRequest;
@@ -55,4 +56,14 @@ public interface BorrowRequestRepository extends JpaRepository<BorrowRequest, In
         WHERE br.id = :id
     """)
     Optional<BorrowRequest> findByIdWithDetails(@Param("id") Integer id);
+
+    // Đếm tất cả request tạo sau thời điểm chỉ định
+    long countByCreatedAtAfter(LocalDateTime dateTime);
+    // Đếm tất cả request tạo trong khoảng
+    long countByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+
+    // Đếm request COMPLETED trong tuần này
+    long countByStatusAndCreatedAtAfter(Integer status, LocalDateTime dateTime);
+    // Đếm request COMPLETED trong tuần trước
+    long countByStatusAndCreatedAtBetween(Integer status, LocalDateTime start, LocalDateTime end);// ví dụ đếm request đã APPROVED
 }

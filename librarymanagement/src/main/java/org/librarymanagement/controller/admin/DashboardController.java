@@ -2,6 +2,8 @@ package org.librarymanagement.controller.admin;
 
 import org.librarymanagement.constant.ApiEndpoints;
 import org.librarymanagement.service.DashboardService;
+import org.librarymanagement.dto.response.DashboardStatsDto;
+import org.librarymanagement.service.DashboardService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +38,10 @@ public class DashboardController {
 
         model.addAttribute("userChartLabels", labels);
         model.addAttribute("userChartData", data);
-        return "admin/dashboard"; // Thymeleaf template
+        
+        // Lấy dữ liệu tổng
+        DashboardStatsDto dashboard = dashboardService.getDashboardData();
+        model.addAttribute("dashboard", dashboard);
+        return "admin/dashboard";
     }
 }
