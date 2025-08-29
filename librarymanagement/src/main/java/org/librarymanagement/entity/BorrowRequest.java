@@ -1,16 +1,19 @@
 package org.librarymanagement.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table(name = "borrow_requests")
 @EqualsAndHashCode(exclude = {"user", "borrowRequestItems"})
+@Table(name = "borrow_requests")
 @Data
 public class BorrowRequest {
 

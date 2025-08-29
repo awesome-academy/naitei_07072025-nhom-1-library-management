@@ -8,6 +8,8 @@ import org.librarymanagement.constant.BookVersionConstants;
 import org.librarymanagement.constant.RoleConstants;
 import org.librarymanagement.dto.response.BorrowRequestRawDto;
 import org.librarymanagement.dto.response.BorrowRequestSummaryDto;
+import org.librarymanagement.dto.response.BorrowRequestDetailDto;
+import org.librarymanagement.dto.response.BorrowRequestItemDto;
 import org.librarymanagement.dto.response.BorrowResponse;
 import org.librarymanagement.dto.response.ResponseObject;
 import org.librarymanagement.entity.*;
@@ -187,5 +189,48 @@ public class BorrowServiceImpl implements BorrowService {
                 raw.borrowDate(),
                 BRStatusConstant.fromValue(raw.status()) // convert int → enum
         ));
+    }
+
+    @Override
+    public BorrowRequestDetailDto getBorrowRequestDetail(Integer id) {
+        BorrowRequest borrowRequest = borrowRequestRepository.findByIdWithDetails(id)
+                .orElseThrow(() -> new RuntimeException("Not found"));
+
+        List<BorrowRequestItemDto> itemRecords = borrowRequest.getBorrowRequestItems().stream()
+                .map(item -> {
+                    var book = item.getBookVersion().getBook();
+                    var author = book.getBookAuthors().stream()
+                            .map(a -> a.getAuthor().getName())
+                            .findFirst()
+                            .orElse("");
+                    return new BorrowRequestItemDto(
+                            book.getTitle(),
+                            author,
+                            book.getPublisher().getName(),
+                            book.getPublishedDay().atStartOfDay(),
+                            book.getTotalCurrent(),
+                            item.getCreatedAt(),
+                            item.getDayExpired(),
+                            borrowRequest.getQuantity(),
+                            item.getStatus()
+                    );
+                })
+                .toList();
+
+        LocalDateTime endDate = itemRecords.stream()
+                .map(BorrowRequestItemDto::dayEnd)
+                .max(LocalDateTime::compareTo)
+                .orElse(null);
+
+        return new BorrowRequestDetailDto(
+                borrowRequest.getUser().getName(),
+                borrowRequest.getUser().getEmail(),
+                borrowRequest.getUser().getPhone(),
+                borrowRequest.getUser().getStatus(),
+                itemRecords,
+                borrowRequest.getCreatedAt(),
+                endDate,
+                BRStatusConstant.fromValue(borrowRequest.getStatus())
+        );
     }
 }

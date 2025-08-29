@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BorrowRequestRepository extends JpaRepository<BorrowRequest, Integer> {
@@ -43,4 +44,15 @@ public interface BorrowRequestRepository extends JpaRepository<BorrowRequest, In
     @Query("SELECT bri FROM BorrowRequest bri WHERE bri.user.id = :id AND bri.status IN (:statuses)")
     @EntityGraph(attributePaths = {"user", "borrowRequestItems"})
     List<BorrowRequest> findByStatusAndUser(@Param("statuses") List<Integer> statuses, @Param("id") Integer id);
+
+    @Query("""
+        SELECT DISTINCT br FROM BorrowRequest br
+        JOIN FETCH br.borrowRequestItems bri
+        JOIN FETCH bri.bookVersion bv
+        JOIN FETCH bv.book b
+        LEFT JOIN FETCH b.bookAuthors ba
+        LEFT JOIN FETCH ba.author a
+        WHERE br.id = :id
+    """)
+    Optional<BorrowRequest> findByIdWithDetails(@Param("id") Integer id);
 }
