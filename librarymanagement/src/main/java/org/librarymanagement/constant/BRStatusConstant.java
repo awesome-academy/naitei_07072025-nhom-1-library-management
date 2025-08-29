@@ -4,8 +4,8 @@ public enum BRStatusConstant {
     PENDING(0, "Đang chờ", "bg-warning"),
     COMPLETED(1, "Hoàn tất", "bg-success"),
     CANCELED(2, "Đã huỷ", "bg-danger"),
-    OVERDUE(3, "Quá hạn", "bg-danger");
-
+    OVERDUE(3, "Quá hạn", "bg-danger"),
+    RETURNED(4,"Đã trả","bg_sucess");
     private final int value;
     private final String label;
     private final String cssClass;
