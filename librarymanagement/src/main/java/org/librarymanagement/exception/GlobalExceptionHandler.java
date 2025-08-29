@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "org.librarymanagement.controller.api")
 public class GlobalExceptionHandler {
     // Xử lý các trường hợp không tìm thấy tài nguyên
     @ExceptionHandler(NotFoundException.class)

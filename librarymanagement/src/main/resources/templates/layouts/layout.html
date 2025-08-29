@@ -33,6 +33,15 @@
         </div>
     </div>
 
+    <div th:if="${message}"
+         class="alert alert-dismissible fade show position-fixed top-0 end-0 m-3"
+         th:classappend="'alert-' + ${alertType}" role="alert" style="z-index: 1050;">
+        <span th:text="${message}"></span>
+        <ul th:if="${errors}">
+            <li th:each="err : ${errors}" th:text="${err}"></li>
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     <script th:src="@{/public/cdn/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/public/js/layouts/app.js}"></script>
 </body>

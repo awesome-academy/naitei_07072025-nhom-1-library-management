@@ -2,6 +2,7 @@ package org.librarymanagement.controller.admin;
 
 import org.librarymanagement.constant.ApiEndpoints;
 import org.librarymanagement.constant.BRStatusConstant;
+import org.librarymanagement.dto.response.BorrowRequestDetailDto;
 import org.librarymanagement.dto.response.BorrowRequestSummaryDto;
 import org.librarymanagement.service.BorrowService;
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -44,7 +46,9 @@ public class BorrowRequestController {
     }
 
     @GetMapping("/{id}")
-    public String showRequestBookedit() {
+    public String showRequestBookedit(@PathVariable Integer id, Model model) {
+        BorrowRequestDetailDto detail = borrowService.getBorrowRequestDetail(id);
+        model.addAttribute("detail", detail);
         return "admin/borrow-requests/detail";
     }
 }

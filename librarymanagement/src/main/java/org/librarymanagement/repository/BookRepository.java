@@ -18,30 +18,26 @@ import java.util.Optional;
 public interface BookRepository extends JpaRepository<Book,Integer> {
 
     @Query("""
-    SELECT DISTINCT new org.librarymanagement.dto.response.BookRawDto(
-        b.id,
-        b.image,
-        b.title,
-        b.description,
-        a.name,
-        p.name,
-        g.name,
-        b.totalCurrent
-    )
-    FROM Book b
-    JOIN b.publisher p
-    LEFT JOIN b.bookAuthors ba
-    LEFT JOIN ba.author a
-    LEFT JOIN b.bookGenres bg
-    LEFT JOIN bg.genre g
-    WHERE (:author IS NULL OR LOWER(a.name) LIKE LOWER(CONCAT('%', :author, '%')))
-        AND (:publisher IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :publisher, '%')))
-        AND (:genre IS NULL OR b.id IN (
-            SELECT b2.id FROM Book b2
-            JOIN b2.bookGenres bg2
-            JOIN bg2.genre g2
-            WHERE LOWER(g2.name) LIKE LOWER(CONCAT('%', :genre, '%'))
-        ))
+        SELECT DISTINCT new org.librarymanagement.dto.response.BookRawDto(
+            b.id,
+            b.image,
+            b.title,
+            b.description,
+            a.name,
+            p.name,
+            g.name,
+            b.totalCurrent
+        )
+        FROM Book b
+        LEFT JOIN b.publisher p
+        LEFT JOIN b.bookAuthors ba
+        LEFT JOIN ba.author a
+        LEFT JOIN b.bookGenres bg
+        LEFT JOIN bg.genre g
+        WHERE (:author IS NULL OR LOWER(a.name) LIKE LOWER(CONCAT('%', :author, '%')))
+          AND (:publisher IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :publisher, '%')))
+          AND (:genre IS NULL OR LOWER(g.name) LIKE LOWER(CONCAT('%', :genre, '%')))
+        ORDER BY b.createdAt DESC
     """)
     Page<BookRawDto> findAllBooksRaw(
             @Param("author") String author,
