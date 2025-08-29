@@ -122,7 +122,44 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
         return new PageImpl<>(pageList, pageable, returnedResponses.size());
     }
 
+    @Override
+    public Page<BorrowFlatResponse> getCancelledBorrowRequests(User user, Pageable pageable) {
+
+        List<BorrowRequest> borrowRequests = borrowRequestRepository.findBorrowRequestByUser(user);
+
+        List<BorrowRequest> cancelledBorrowRequests = new ArrayList<>();
+
+        cancelledBorrowRequests = borrowRequests.stream().filter(b -> b.getStatus().equals(BRStatusConstant.CANCELED.getValue())).toList();
+
+        if(cancelledBorrowRequests.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        List<BorrowFlatResponse> cancelledResponses = new ArrayList<>();
+        for (BorrowRequest request : cancelledBorrowRequests) {
+            List<BorrowRequestItem> items = borrowRequestItemRepository.findBorrowRequestItemByBorrowRequest(request);
+            items.forEach(item -> {
+                cancelledResponses.add(convertToFlatResponse(item, request.getCancelReason(), null));
+            });
+        }
+
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        List<BorrowFlatResponse> pageList;
+
+        if (cancelledResponses.size() < startItem) {
+            pageList = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, cancelledResponses.size());
+            pageList = cancelledResponses.subList(startItem, toIndex);
+        }
+
+        return new PageImpl<>(pageList, pageable, cancelledResponses.size());
+    }
+
     private BorrowFlatResponse convertToFlatResponse(BorrowRequestItem item, String cancelReason, String reviewLink) {
+
         BookVersion bookVersion = item.getBookVersion();
         Book book = bookVersion.getBook();
         Publisher publisher = book.getPublisher();

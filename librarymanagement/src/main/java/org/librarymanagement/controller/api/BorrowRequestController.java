@@ -73,4 +73,28 @@ public class BorrowRequestController {
                 books.getTotalPages()
         ));
     }
+
+    @GetMapping("/cancelled")
+    public ResponseEntity<PageResponse<BorrowFlatResponse>> getCancelledBorrowRequest(Pageable pageable) {
+
+        User user = currentUserService.getCurrentUser();
+
+        Page<BorrowFlatResponse> books = borrowRequestService.getCancelledBorrowRequests(user, pageable);
+
+        String successMessage = messageSource.getMessage(
+                "user.borrowBooks.cancelledBook",
+                null,
+                LocaleContextHolder.getLocale()
+        );
+
+        return ResponseEntity.ok(new PageResponse<>(
+                successMessage,
+                HttpStatus.OK.value(),
+                books.getContent(),
+                books.getNumber(),
+                books.getSize(),
+                books.getTotalElements(),
+                books.getTotalPages()
+        ));
+    }
 }
